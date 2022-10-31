@@ -4,7 +4,7 @@ interface THeader {
 	isAuthenticated: Boolean;
 	onLogout?: any;
 }
-const Header = ({ isAuthenticated, onLogout }: THeader) => {
+const Header = () => {
 	return (
 		<header className='px-[123px] header_shadow py-[15px] bg-white'>
 			<div className='flex items-center justify-between'>
@@ -20,10 +20,8 @@ const Header = ({ isAuthenticated, onLogout }: THeader) => {
 						/>
 					</Link>
 				</div>
-
-				{isAuthenticated && (
-					<button
-						onClick={onLogout}
+{/* 
+				<button
 						className='bg-[#E25C5C] font-bold flex items-center text-white text-center text-[20px] px-[28px] py-[14px] rounded-[8px]'
 					>
 						<img
@@ -33,8 +31,7 @@ const Header = ({ isAuthenticated, onLogout }: THeader) => {
 							height={25}
 						/>
 						Log Out
-					</button>
-				)}
+					</button> */}
 			</div>
 		</header>
 	);

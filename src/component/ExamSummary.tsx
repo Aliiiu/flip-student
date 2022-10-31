@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import Button from './UI/Button';
 import ErrorModal from './UI/ErrorModal';
+import { auth } from 'src/store/auth';
 
 const ExamSummary = () => {
+	const { authUser } = auth.use();
+
 	const [showModal, setShowModal] = useState<boolean | null>(false);
 	return (
 		<div className='examSummaryCard'>
 			<div className='mb-[16px] pr-[20px]'>
 				<div className='pb-[16px]'>
-					<h4 className='text-[18px] font-semibold'>First Term Exam 2022</h4>
-					<h6 className='text-[14px]'>Mathematics</h6>
+					<h4 className='text-[18px] font-semibold capitalize'>{authUser?.assessment?.term} Term Exam {authUser?.assessment?.year}</h4>
+					<h6 className='text-[14px]'>{authUser?.assessment?.subject}</h6>
 				</div>
 				<hr />
 				<div className='flex flex-col gap-y-[16px] mt-[16px]'>

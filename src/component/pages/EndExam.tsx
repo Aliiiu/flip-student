@@ -56,7 +56,7 @@ const EndExam = () => {
 	return (
 		<div>
 			<div className='container'>
-				<Header isAuthenticated={true} />
+				<Header />
 			</div>
 			<div className='container'>
 				<div className='pl-[255px] pt-[83px] pb-[213px] pr-[123px]'>
