@@ -1,128 +1,106 @@
-import React, { ChangeEventHandler, FC, useState } from 'react';
+import React, { useState } from 'react';
 import { BiLock } from 'react-icons/bi';
 import { TbUser } from 'react-icons/tb';
+import { AuthService } from 'src/services';
+import { setAuthToken } from 'src/utils/AuthUtils';
+import { useNavigate } from 'react-router-dom';
+import { auth, setAuthUser } from 'src/store/auth';
 
-const Login: FC<{ onLogin: any }> = (props) => {
-	const [studentIsTouched, setStudentIsTouched] = useState<boolean>(false);
-	const [examIsTouched, setExamIsTouched] = useState<boolean>(false);
-	const [enteredStudentID, setEnteredStudentID] = useState('');
-	const [enteredExamID, setEnteredExamID] = useState('');
+const Login = () => {
+	  const { authUser } = auth.use();
 
-	const studentIDIsValid =
-		enteredStudentID.trim() !== '' && enteredStudentID.trim().length === 12;
-	const examIDIsValid =
-		enteredExamID.trim() !== '' && enteredExamID.trim().length === 6;
+	const navigate = useNavigate();
+	const [formState, setFormState] = useState({
+		studentId: '',
+		examId: '',
+	  });
+	
+	
+	  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormState({
+		  ...formState,
+		  [e.target.name]: e.target.value,
+		});
+	  };
+	
 
-	const studentInputIsInValid = !studentIDIsValid && studentIsTouched;
-	const examInputIsInValid = !examIDIsValid && examIsTouched;
 
-	// ABC/2022/108
+	const handleSubmit = (e: any) => {
+		e.preventDefault();
+		const { studentId, examId } = formState;
+		const requestData = { student_id:studentId, assessment_code:examId };
+		
+		// startLoggingIn()
+		AuthService.studentLogin(requestData)
+		  .then((res: any) => {
+			setAuthToken(res?.data?.payload?.data?.token)
+			// decodeToken(res?.data?.payload?.data?.token);
+			console.log(res)
+			setAuthUser(res?.data?.payload?.data)
+			// setAuthUser({
+			// 	hi: 'hello'
+			// })
+			navigate('/exam');
+		  })
+		  .catch((err: any) => {
+			console.log(err?.response?.data?.error?.message)
+		  })
+		//   .finally(() => {
+		// 	stopLoggingIn();
+		//   });
+	  };
+	  console.log(authUser);
 
-	const studentInputChangeHandler: ChangeEventHandler<HTMLInputElement> = (
-		event
-	) => {
-		setEnteredStudentID(event.target.value);
-	};
-	const studentInputBlurHandler = () => {
-		setStudentIsTouched(true);
-	};
-	const examInputChangeHandler: ChangeEventHandler<HTMLInputElement> = (
-		event
-	) => {
-		setEnteredExamID(event.target.value);
-	};
-	const examInputBlurHandler = () => {
-		setExamIsTouched(true);
-	};
-
-	const submitHandler = (event: React.FormEvent) => {
-		event.preventDefault();
-		setStudentIsTouched(true);
-		setExamIsTouched(true);
-		if (
-			!(
-				enteredStudentID.trim().length === 12 &&
-				enteredExamID.trim().length === 6
-			)
-		) {
-			return;
-		}
-		props.onLogin(enteredStudentID, enteredExamID);
-
-		setEnteredExamID('');
-		setEnteredStudentID('');
-		setExamIsTouched(false);
-		setStudentIsTouched(false);
-	};
 
 	return (
 		<div className='flex items-center justify-center min-h-screen'>
-			<div className='card w-[35%] max-w-[540px] '>
+			<div className='card w-[500px] max-w-[85%] '>
 				<h2 className='text-center font-semibold mb-[25px] text-[32px]'>
 					STUDENT LOGIN
 				</h2>
-				<form onSubmit={submitHandler}>
+				<form onSubmit={handleSubmit}>
 					<div className='flex flex-col'>
 						<label
 							htmlFor='studentId'
-							className={`block ${
-								studentInputIsInValid ? 'text-red-400' : ''
-							} mb-[5px] text-[20px]`}
+							className={`block mb-[5px] text-[20px]`}
 						>
 							Student ID
 						</label>
 						<div
-							className={`flex items-center border  ${
-								studentInputIsInValid ? 'border-red-400' : 'border-black'
-							} rounded-[8px] bg-white`}
+							className={`flex items-center border border-black rounded-[8px] bg-white`}
 						>
 							<TbUser className='text-[25px] ml-[24px]' />
 							<input
 								type='text'
 								placeholder='1258464'
-								onChange={studentInputChangeHandler}
-								onBlur={studentInputBlurHandler}
-								value={enteredStudentID}
+								onChange={handleChange}
+								value={formState.studentId}
 								name='studentId'
-								className='placeholder-black rounded-tr-[8px] rounded-br-[8px] flex-1 py-[12px] px-[12px] outline-none'
+								className='placeholder-[#828282] rounded-tr-[8px] rounded-br-[8px] flex-1 py-[12px] px-[12px] outline-none'
 							/>
 						</div>
-						{studentInputIsInValid && (
-							<p className='text-red-400 text-[14px]'>
-								Your student ID is incorrect!
-							</p>
-						)}
 					</div>
 					<div className='flex flex-col mt-[30px]'>
 						<label
 							htmlFor='studentId'
-							className={`block ${
-								studentInputIsInValid ? 'text-red-400' : ''
-							} mb-[5px] text-[20px]`}
+							className={`block mb-[5px] text-[20px]`}
 						>
 							Exam ID
 						</label>
 						<div
-							className={`flex items-center border   ${
-								examInputIsInValid ? 'border-red-400' : 'border-black'
+							className={`flex items-center border  border-black
 							} rounded-[8px] bg-white`}
 						>
 							<BiLock className='text-[25px] ml-[24px]' />
 							<input
 								type='text'
 								placeholder='*********'
-								onChange={examInputChangeHandler}
-								onBlur={examInputBlurHandler}
-								value={enteredExamID}
+								onChange={handleChange}
+								value={formState.examId}
 								name='examId'
-								className='placeholder-black rounded-tr-[8px] rounded-br-[8px] flex-1 py-[12px] px-[12px] outline-none'
+								className='placeholder-[#828282] rounded-tr-[8px] rounded-br-[8px] flex-1 py-[12px] px-[12px] outline-none'
 							/>
 						</div>
-						{examInputIsInValid && (
-							<p className='text-red-400 text-[14px]'>
-								Your exam ID is incorrect!
-							</p>
-						)}
 					</div>
 					<button
 						type='submit'

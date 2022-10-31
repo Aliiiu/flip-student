@@ -4,8 +4,11 @@ import ExamTimer from '../ExamTimer';
 import Header from '../Header';
 import Questions from '../Questions';
 import CalculatorApp from '../UI/Calculator';
+import { auth } from 'src/store/auth';
 
 const Exam = () => {
+	const { authUser } = auth.use();
+
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, []);
@@ -17,7 +20,7 @@ const Exam = () => {
 	return (
 		<div className=''>
 			<div className='container'>
-				<Header isAuthenticated={true} />
+				<Header />
 			</div>
 			<div className='min-h-screen mt-[77px] px-[124px]'>
 				<div className='flex justify-between '>
@@ -29,12 +32,13 @@ const Exam = () => {
 					<div className='w-[30%]'>
 						<div className='flex items-center justify-between w-full'>
 							<img
-								src={'/images/user2.png'}
+							className='rounded-full'
+								src={authUser?.student?.display_picture_url}
 								alt='user avatar'
 								width={98}
 								height={98}
 							/>
-							<h3 className='text-[20px]'>Adekunle Fajuyi Emeka</h3>
+							<h3 className='text-[20px]'>{authUser?.student?.name}</h3>
 						</div>
 						<ExamTimer />
 						<div className='mt-[42px]'>

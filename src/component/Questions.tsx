@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import questions from '../mock-data/data.json';
 import Button from './UI/Button';
@@ -56,11 +56,11 @@ const Questions = () => {
 		setCurrQuestion(activeIndex);
 	};
 
-	useEffect(() => {
-		console.log(question);
-	}, [question]);
+	// useEffect(() => {
+	// 	console.log(question);
+	// }, [question]);
 
-	console.log(question[CurrQuestion].reviewLater);
+	// console.log(question[CurrQuestion].reviewLater);
 
 	return (
 		<div>

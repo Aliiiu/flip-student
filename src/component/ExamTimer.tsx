@@ -2,6 +2,7 @@ import CountDownTimer from './CountDownTImer';
 
 const ExamTimer = () => {
 	const Timer = 4 * 60 * 1000 + new Date().getTime();
+	console.log(4 * 60 * 1000)
 	return (
 		<div className='flex items-start mt-[42px] justify-center examTimeCard'>
 			<div className='text-center'>

@@ -13,50 +13,13 @@ interface Props {
 
 function App() {
 	const [error, setError] = useState<Boolean>();
-	const [enteredStudentID, setenteredStudentID] = useState('');
-	const [enteredExamID, setenteredExamID] = useState('');
-	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
 	const [modalMessage, setModalMessage] = useState<Props>({
 		message: '',
 		src: '',
 		alt: '',
 		classes: '',
 	});
-	const logoutHandler = () => {
-		setIsLoggedIn(false);
-	};
-
-	const loginHandler = (studentId: string, examId: string) => {
-		if (
-			studentId.toUpperCase() === 'ABC/2022/108' &&
-			examId.toUpperCase() === 'MTH201'
-		) {
-			if (studentId !== enteredStudentID && examId !== enteredExamID) {
-				setenteredStudentID(studentId);
-				setenteredExamID(examId);
-				setIsLoggedIn(true);
-			} else {
-				setError(true);
-				setenteredStudentID('');
-				setenteredExamID('');
-				setModalMessage({
-					message:
-						'Congratulations ABC/2022/108, You have completed your exam.',
-					src: '/images/checkCircle.png',
-					alt: 'success',
-					classes: 'bg-[#D1FADF] border-[#ECFDF3]',
-				});
-			}
-		} else {
-			setError(true);
-			setModalMessage({
-				message: 'You are not scheduled for this examination',
-				src: '/images/alertCircle.png',
-				alt: 'something went wrong',
-				classes: 'bg-[#FEE4E2] border-[#FEF3F2]',
-			});
-		}
-	};
 
 	const closeModalHandler = () => {
 		setError(false);
@@ -64,7 +27,7 @@ function App() {
 	return (
 		<div>
 			<div className='container'>
-				<Header onLogout={logoutHandler} isAuthenticated={isLoggedIn} />
+				<Header/>
 			</div>
 			{error && (
 				<LoginModal
@@ -78,10 +41,10 @@ function App() {
 			<main>
 				<div className='mainBg'>
 					<div className='container'>
-						{!isLoggedIn && <Login onLogin={loginHandler} />}
+					<Login/>
 					</div>
 				</div>
-				<div>{isLoggedIn && <VerifyInfo />}</div>
+				<div><VerifyInfo /></div>
 			</main>
 		</div>
 	);
