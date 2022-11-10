@@ -50,9 +50,7 @@ const Questions = () => {
 	});
 	const [searchParams] = useSearchParams();
 	let index = Number(searchParams.get('index')) || 0;
-	const [checked, setChecked] = useState(
-		() => questions[index].questionStatus === 'revise'
-	);
+	const [checked, setChecked] = useState(false);
 	const [answer, setAnswer] = useState('');
 	let [plan, setPlan] = useState('');
 	const { loading, startLoading, stopLoading } = useLoading();
@@ -119,7 +117,7 @@ const Questions = () => {
 
 	useEffect(() => {
 		setChecked(false);
-		setChecked(questions[index].questionStatus === 'revise');
+		setChecked(questions[index]?.questionStatus === 'revise' || false);
 		setCurrOption('');
 	}, [index, questions, searchParams]);
 
