@@ -5,9 +5,15 @@ import Header from '../Header';
 import Questions from '../Questions';
 import CalculatorApp from '../UI/Calculator';
 import { auth } from 'src/store/auth';
+import { useSearchParams } from 'react-router-dom';
+import QuestionService from 'src/services/AssesssmentService';
+import { useSelector, useDispatch } from 'react-redux';
+import { loadDefaultQuestionState } from 'src/feature/counter/counterSlice';
 
 const Exam = () => {
 	const { authUser } = auth.use();
+	const [searchParams] = useSearchParams();
+	let dispatch = useDispatch();
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -17,12 +23,28 @@ const Exam = () => {
 	const showCalculator = () => {
 		setShowCalc((prevState) => !prevState);
 	};
+
+	const totalQuestions = authUser?.assessment?.total_questions || 0;
+
+	useEffect(() => {
+		if (totalQuestions > 0) {
+			const defaultQuestionState = Array.from(Array(totalQuestions).keys()).map(
+				(q) => ({
+					id: q,
+					questionStatus: 'uncompleted',
+				})
+			);
+
+			dispatch(loadDefaultQuestionState(defaultQuestionState));
+		}
+	}, [dispatch, totalQuestions]);
+
 	return (
 		<div className=''>
-			<div className='container'>
+			<div className=''>
 				<Header />
 			</div>
-			<div className='min-h-screen mt-[77px] px-[124px]'>
+			<div className='min-h-screen container pt-[77px] lg:px-10'>
 				<div className='flex justify-between '>
 					<div className='w-[60%] flex flex-col justify-between'>
 						<div>
@@ -30,15 +52,17 @@ const Exam = () => {
 						</div>
 					</div>
 					<div className='w-[30%]'>
-						<div className='flex items-center justify-between w-full'>
+						<div className='flex items-center gap-8 w-full'>
 							<img
-							className='rounded-full'
+								className='rounded-full'
 								src={authUser?.student?.display_picture_url}
 								alt='user avatar'
 								width={98}
 								height={98}
 							/>
-							<h3 className='text-[20px]'>{authUser?.student?.name}</h3>
+							<h3 className='text-[20px] font-semibold'>
+								{authUser?.student?.name}
+							</h3>
 						</div>
 						<ExamTimer />
 						<div className='mt-[42px]'>

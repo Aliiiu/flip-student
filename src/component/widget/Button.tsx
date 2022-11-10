@@ -5,13 +5,15 @@ type Props = {
 	onClick?: () => void;
 	dataIndex?: number;
 	children: ReactNode;
+	disabled?: boolean;
 };
-const Button = ({ classes, children, onClick, dataIndex }: Props) => {
+const Button = ({ classes, children, onClick, dataIndex, disabled }: Props) => {
 	return (
 		<button
+			disabled={disabled}
 			data-index={dataIndex}
 			onClick={onClick}
-			className={`py-[14px] text-[20px] w-[200px] endExamBtn ${classes}`}
+			className={`rounded-lg w-[150px] ${classes}`}
 		>
 			{children}
 		</button>

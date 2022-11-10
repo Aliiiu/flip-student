@@ -28,6 +28,10 @@ a {
 	text-decoration: none;
 }
 
+li {
+	list-style: none;
+}
+
 *,
 *::before,
 *::after {
@@ -109,11 +113,7 @@ p {
 	border-radius: 16px;
 }
 
-.popUpModal {
-	position: absolute;
-	top: 70vh;
-	left: 60%;
-	z-index: 100;
+.popupModal {
 	background: #ffffff;
 	box-shadow: 0px 8px 24px rgba(149, 157, 165, 0.2);
 	border-radius: 16px;

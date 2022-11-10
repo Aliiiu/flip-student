@@ -1,38 +1,24 @@
-import { entity } from 'simpler-state';
+import { entity, persistence } from 'simpler-state';
 
 interface IAuthUser {
-    [x: string] : any
+	[x: string]: any;
+}
+
+interface UserType {
+	assessment: { [x: string]: any };
+	assessment_code: string;
+	assessment_status: string;
+	token: string;
+	student: { [x: string]: any };
 }
 const initialState = { authUser: {} as IAuthUser };
 
-export const auth = entity(initialState);
+export const auth = entity(initialState, [persistence('AuthUser')]);
 
-export const setAuthUser = (payload = {}) => auth.set((value) => ({ ...value, authUser: payload }));
+export const setAuthUser = (payload = {}) =>
+	auth.set((value) => ({ ...value, authUser: payload }));
 
 export const resetAuthUser = () => setAuthUser();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // export const isLoggedIn = () => {
 //     const token = localStorage.getItem('kq_dfe');
