@@ -13,6 +13,8 @@ import { RadioGroup } from '@headlessui/react';
 import { IoCheckmarkCircleSharp, IoEllipseOutline } from 'react-icons/io5';
 import { toast, ToastContainer } from 'react-toastify';
 import useLoading from '../hook/useLoading';
+import AppModal from './widget/Modal/Modal';
+import EndModalContent from './UI/EndModalContent';
 
 interface questionModel {
 	id: number;
@@ -51,6 +53,7 @@ const Questions = () => {
 	const [searchParams] = useSearchParams();
 	let index = Number(searchParams.get('index')) || 0;
 	const [checked, setChecked] = useState(false);
+	const [showModal, setShowModal] = useState(false);
 	const [answer, setAnswer] = useState('');
 	let [plan, setPlan] = useState('');
 	const { loading, startLoading, stopLoading } = useLoading();
@@ -95,6 +98,7 @@ const Questions = () => {
 		} else {
 			console.log('end');
 			clickHandler(currOption || '');
+			setShowModal(true);
 		}
 	};
 
@@ -131,10 +135,33 @@ const Questions = () => {
 	let progressWidth = {
 		width: `${progess}%`,
 	};
+	const endExamHandler = () => {
+		QuestionService.endExam()
+			.then((res) => {
+				console.log(res?.data);
+				navigate('/endExam');
+			})
+			.catch((err) => {
+				console.log(err?.response?.error?.message);
+			})
+			.finally(() => {
+				setShowModal(false);
+			});
+	};
 
 	return (
 		<div>
 			<ToastContainer />
+			<AppModal
+				open={showModal}
+				onClose={() => setShowModal(false)}
+				content={
+					<EndModalContent
+						onClick={() => setShowModal(false)}
+						onPress={endExamHandler}
+					/>
+				}
+			/>
 			<div className='flex justify-between mb-[44px]'>
 				<span className='bg-[#FFAD4A] flex justify-center items-center rounded-[8px] text-[20px] w-[45px] h-[43px] text-white'>
 					{Number(searchParams.get('index')) + 1}
