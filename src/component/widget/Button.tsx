@@ -13,7 +13,7 @@ const Button = ({ classes, children, onClick, dataIndex, disabled }: Props) => {
 			disabled={disabled}
 			data-index={dataIndex}
 			onClick={onClick}
-			className={`rounded-lg w-[150px] ${classes}`}
+			className={`rounded-lg w-[150px] disabled:cursor-not-allowed ${classes}`}
 		>
 			{children}
 		</button>

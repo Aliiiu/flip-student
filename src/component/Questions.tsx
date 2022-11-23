@@ -15,6 +15,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import useLoading from '../hook/useLoading';
 import AppModal from './widget/Modal/Modal';
 import EndModalContent from './UI/EndModalContent';
+import { BounceLoader } from 'react-spinners';
 
 interface questionModel {
 	id: number;
@@ -57,6 +58,11 @@ const Questions = () => {
 	const [answer, setAnswer] = useState('');
 	let [plan, setPlan] = useState('');
 	const { loading, startLoading, stopLoading } = useLoading();
+	const {
+		loading: newQuestion,
+		startLoading: getNewQuestion,
+		stopLoading: stopNewQuestion,
+	} = useLoading();
 
 	const clickHandler = (option: string) => {
 		console.log(option);
@@ -110,12 +116,14 @@ const Questions = () => {
 	useEffect(() => {
 		console.log(searchParams.get('index'));
 		if (index >= 0) {
+			getNewQuestion();
 			QuestionService.getQuestion({ question_index: searchParams.get('index') })
 				.then((res) => {
 					console.log(res.data);
 					setPayload(res.data.payload.data);
 				})
-				.catch((err) => console.log(err.response));
+				.catch((err) => console.log(err.response))
+				.finally(() => stopNewQuestion());
 		}
 	}, [index, searchParams]);
 
@@ -184,106 +192,112 @@ const Questions = () => {
 					className={`bg-[#0075FF] h-[8px] rounded-l-[8px]`}
 				></div>
 			</div>
-			<div className='bg-white mt-[96px] flex flex-col h-auto justify-between'>
-				<div>
-					{/* <p className='mb-[60px] text-[24px]'>
+			{!newQuestion ? (
+				<div className='bg-white mt-[96px] flex flex-col h-auto justify-between'>
+					<div>
+						{/* <p className='mb-[60px] text-[24px]'>
 						{question[CurrQuestion].questionText}
 					</p> */}
-					{parse(payload.question)}
-					{/* <img
+						{parse(payload.question)}
+						{/* <img
 						src={payload.question_image || ''}
 						alt=''
 						className='h-32 w-full'
 					/> */}
-					<div className='mt-10'>
-						{payload.type === 'short-answer' ? (
-							<div className='border-2 border-[#06042c33] flex flex-col rounded-2xl pt-10 overflow-hidden'>
-								<hr className='bg-[#06042c33]' />
-								<textarea
-									name='body'
-									value={payload.candidate_answer || answer}
-									onChange={(e: any) => setAnswer(e.target.value)}
-									className='border-none pt-3 pl-3 outline-none resize-none h-20 w-full'
-								/>
-								<div className='flex justify-end pb-4 pr-4'>
-									<Button
-										onClick={() => clickHandler(answer)}
-										classes='bg-primary items-end px-5 py-2 text-white'
-									>
-										Sumbit
-									</Button>
+						<div className='mt-10'>
+							{payload.type === 'short-answer' ? (
+								<div className='border-2 border-[#06042c33] flex flex-col rounded-2xl pt-10 overflow-hidden'>
+									<hr className='bg-[#06042c33]' />
+									<textarea
+										name='body'
+										value={answer || payload.candidate_answer}
+										onChange={(e: any) => setAnswer(e.target.value)}
+										className='border-none pt-3 pl-3 outline-none resize-none h-20 w-full'
+									/>
+									<div className='flex justify-end pb-4 pr-4'>
+										<Button
+											onClick={() => clickHandler(answer)}
+											classes='bg-primary items-end px-5 py-2 text-white'
+										>
+											Sumbit
+										</Button>
+									</div>
 								</div>
-							</div>
-						) : (
-							<div>
-								<RadioGroup
-									value={plan}
-									onChange={setPlan}
-									className='flex flex-col gap-y-[20px]'
-								>
-									{payload.options.map((plan) => (
-										/* Use the `active` state to conditionally style the active option. */
-										/* Use the `checked` state to conditionally style the checked option. */
-										<RadioGroup.Option key={plan} value={plan}>
-											{({ active, checked }) => (
-												<li
-													onClick={() => clickHandler(plan)}
-													className={`border-2 rounded-2xl p-4 flex items-center gap-4 capitalize border-[#C0C0C0] ${
-														payload.candidate_answer === plan || active
-															? 'border-blue-500 text-blue-500'
-															: 'bg-white text-[#06042C]'
-													} `}
-												>
-													{payload.candidate_answer === plan || active ? (
-														<IoCheckmarkCircleSharp
-															size={30}
-															className='text-blue-600'
-														/>
-													) : (
-														<IoEllipseOutline
-															size={30}
-															className='text-[#C0C0C0]'
-														/>
-													)}
-													{plan}
-												</li>
-											)}
-										</RadioGroup.Option>
-									))}
-								</RadioGroup>
-							</div>
+							) : (
+								<div>
+									<RadioGroup
+										value={plan}
+										onChange={setPlan}
+										className='flex flex-col gap-y-[20px]'
+									>
+										{payload.options.map((plan) => (
+											/* Use the `active` state to conditionally style the active option. */
+											/* Use the `checked` state to conditionally style the checked option. */
+											<RadioGroup.Option key={plan} value={plan}>
+												{({ active, checked }) => (
+													<li
+														onClick={() => clickHandler(plan)}
+														className={`border-2 rounded-2xl p-4 flex items-center gap-4 capitalize border-[#C0C0C0] ${
+															payload.candidate_answer === plan || active
+																? 'border-blue-500 text-blue-500'
+																: 'bg-white text-[#06042C]'
+														} `}
+													>
+														{payload.candidate_answer === plan || active ? (
+															<IoCheckmarkCircleSharp
+																size={30}
+																className='text-blue-600'
+															/>
+														) : (
+															<IoEllipseOutline
+																size={30}
+																className='text-[#C0C0C0]'
+															/>
+														)}
+														{plan}
+													</li>
+												)}
+											</RadioGroup.Option>
+										))}
+									</RadioGroup>
+								</div>
+							)}
+						</div>
+					</div>
+					<div className='flex mt-10 justify-between'>
+						{Number(searchParams.get('index')) > 0 && (
+							<Button
+								// dataIndex={CurrQuestion - 1}
+								disabled={loading}
+								onClick={handlePrev}
+								classes='flex justify-center text-[#0075FF] border-2 border-primary items-center py-2 w-[150px] gap-x-[9px]'
+							>
+								<BsArrowLeft /> Previous
+							</Button>
+						)}
+						{Number(searchParams.get('index')) + 1 <=
+							authUser?.assessment?.total_questions && (
+							<Button
+								disabled={loading}
+								// dataIndex={CurrQuestion + 1}
+								onClick={handleNext}
+								classes='flex gap-x-[9px] bg-[#0075ff] text-white justify-center py-2 w-[150px] items-center'
+							>
+								Next
+								<BsArrowRight />
+							</Button>
 						)}
 					</div>
-				</div>
-				<div className='flex mt-10 justify-between'>
-					{Number(searchParams.get('index')) > 0 && (
-						<Button
-							// dataIndex={CurrQuestion - 1}
-							disabled={loading}
-							onClick={handlePrev}
-							classes='flex justify-center text-[#0075FF] border-2 border-primary items-center py-2 w-[150px] gap-x-[9px]'
-						>
-							<BsArrowLeft /> Previous
-						</Button>
-					)}
-					{Number(searchParams.get('index')) + 1 <=
-						authUser?.assessment?.total_questions && (
-						<Button
-							disabled={loading}
-							// dataIndex={CurrQuestion + 1}
-							onClick={handleNext}
-							classes='flex gap-x-[9px] bg-[#0075ff] text-white justify-center py-2 w-[150px] items-center'
-						>
-							Next
-							<BsArrowRight />
-						</Button>
-					)}
-				</div>
-				{/* <>
+					{/* <>
 					{Number(searchParams.get('index')) + 1}
 					{authUser?.assessment?.total_questions}
 				</> */}
-			</div>
+				</div>
+			) : (
+				<div className='h-40 mt-10 w-full flex justify-center items-center'>
+					<BounceLoader className='text-[#0075FF]' color='#0075FF' size={60} />
+				</div>
+			)}
 		</div>
 	);
 };

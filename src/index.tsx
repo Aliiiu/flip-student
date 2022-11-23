@@ -12,16 +12,16 @@ import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import { socket, SocketContext } from './context/socket';
 
-let persistor = persistStore(store);
+const persistor = persistStore(store);
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
 root.render(
-	<BrowserRouter>
-		<Provider store={store}>
-			<PersistGate loading={null} persistor={persistor}>
+	<Provider store={store}>
+		<PersistGate loading={null} persistor={persistor}>
+			<BrowserRouter>
 				<App />
-			</PersistGate>
-		</Provider>
-	</BrowserRouter>
+			</BrowserRouter>
+		</PersistGate>
+	</Provider>
 );

@@ -54,39 +54,6 @@ const Exam = () => {
 		}
 	}, [dispatch, totalQuestions]);
 
-	let newTime = authUser?.obj_time;
-	let setTime = Number(newTime.split(':').shift()) || 1;
-	const Timer = setTime * 60;
-	const [timeInSec, setTimeInSec] = useState(Timer);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			if (timeInSec > 0) {
-				// console.log(timeInSec);
-				setTimeInSec((timeInSec) => timeInSec - 1);
-			}
-		}, 1000);
-		return () => clearInterval(interval);
-	}, [timeInSec]);
-
-	// console.log(result); // 👉️ "09:25"
-	// useEffect(() => {
-	// 	const minutes = Math.floor(timeInSec / 60);
-	// 	const seconds = timeInSec % 60;
-
-	// 	function padTo2Digits(num: number) {
-	// 		return num.toString().padStart(2, '0');
-	// 	}
-	// 	const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
-	// 	console.log(result);
-	// 	const interval = setInterval(() => {
-	// 		console.log(result);
-	// 		console.log(timeInSec);
-	// 		// socket.emit('time_observer', result);
-	// 	}, 10000);
-	// 	return () => clearInterval(interval);
-	// }, [timeInSec]);
-
 	return (
 		<div className=''>
 			<div className=''>
