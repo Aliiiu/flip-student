@@ -56,14 +56,8 @@ const CountDownTimer: FC<{ targetTime: number; socket: any }> = ({
 	}, [timeInSec]);
 	const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
 	const [timer, setTimer] = useState(result);
-	console.log('outside', result, timer);
-	const timerRef = useRef(result);
-	// useEffect(() => {
-	// 	setTimer(result);
-	// 	// console.log('timer', result);
-	// 	// console.log('timeref', timerRef);
-	// 	// console.log(timer);
-	// }, [seconds]);
+	// console.log('outside', result, timer);
+	// const timerRef = useRef(result);
 
 	useEffect(() => {
 		// setTimer(result);
@@ -71,13 +65,31 @@ const CountDownTimer: FC<{ targetTime: number; socket: any }> = ({
 		// 	console.log(timer);
 		// 	console.log('inner', result);
 		// };
-		const interval = setInterval(() => {
-			// jumper();
-			console.log('inner', result, timer);
-		}, 5000);
+		// setTimer(() => result);
+		console.log('inside useffect', result, seconds);
+		if (seconds % 5 === 0) {
+			console.log('inner', result);
+			socket.emit('time_observer', result);
+		}
+		// const interval = setInterval(() => {
+		// 	// jumper();
+		// 	console.log('inner', result, timer);
+		// }, 5000);
 
-		return () => clearInterval(interval);
-	}, []);
+		// return () => clearInterval(interval);
+	}, [result, seconds, socket]);
+
+	// useEffect(() => {
+	// 	// console.log('timer', result);
+	// 	// console.log('timeref', timerRef);
+	// 	// console.log(timer);
+	// 	const interval = setInterval(() => {
+	// 		// jumper();
+	// 		console.log('inner', result, timer);
+	// 	}, 5000);
+
+	// 	return () => clearInterval(interval);
+	// }, []);
 
 	// useEffect(() => {
 	// 	console.log(result);
