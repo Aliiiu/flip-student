@@ -90,7 +90,7 @@ const ExamSummary = () => {
 			</div>
 			<div>
 				<h5>Question List</h5>
-				<div className='grid grid-cols-5 gap-y-[10px] mt-[24px] overflow-y-scroll h-[200px] gap-x-[10px]'>
+				<div className='grid grid-cols-5 gap-y-[10px] mt-[24px] overflow-y-scroll gap-x-[10px]'>
 					{questions.map((item, idx) => {
 						// let color = 'bg-gray-400';
 						// const status =
@@ -123,7 +123,7 @@ const ExamSummary = () => {
 						);
 					})}
 				</div>
-				<div className='text-center mt-[16px]'>
+				<div className='text-center mt-10'>
 					<AppModal
 						open={showModal}
 						onClose={() => setShowModal(false)}

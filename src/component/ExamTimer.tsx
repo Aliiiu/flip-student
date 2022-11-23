@@ -1,21 +1,20 @@
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
+import { Socket } from 'socket.io-client';
 import { auth } from 'src/store/auth';
 import CountDownTimer from './CountDownTImer';
 
-const ExamTimer = () => {
+const ExamTimer: FC<{
+	socket: any;
+}> = ({ socket }) => {
 	const { authUser } = auth.use();
-	let newTime = authUser?.assessment?.obj_time;
+	let newTime = authUser?.obj_time;
 	let setTime = Number(newTime.split(':').shift()) || 1;
-	const Timer = setTime * 60 * 1000 + new Date().getTime();
-	// console.log(4 * 60 * 1000);
+	const Timer = setTime * 60;
+	// console.log(Timer);
 	return (
 		<div className='flex items-start mt-[42px] justify-center examTimeCard'>
 			<div className='text-center'>
-				{/* <span className='text-[#0075FF] text-[32px] font-semibold'>
-					03:15:00
-				</span> */}
-				<CountDownTimer targetTime={Timer} />
-				<p>Time remaining</p>
+				<CountDownTimer socket={socket} targetTime={Timer} />
 			</div>
 		</div>
 	);

@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { websocket } from 'src/store/websocket';
 import { useCountDown } from '../hook/useCounterDown';
 import DateTimeDisplay from './DateTimeDisplay';
 
@@ -10,21 +11,12 @@ const ExpiredNotice = () => {
 	);
 };
 
-const ShowCounter: FC<{ hours: number; minutes: number; seconds: number }> = ({
-	hours,
+const ShowCounter: FC<{ minutes: number; seconds: number }> = ({
 	minutes,
 	seconds,
 }) => {
 	return (
 		<div className='flex items-center justify-center'>
-			<DateTimeDisplay value={hours} isDanger={minutes < 3} />
-			<span
-				className={`text-[32px] ${
-					minutes < 3 ? 'text-red-500' : 'text-[#0075FF]'
-				}`}
-			>
-				:
-			</span>
 			<DateTimeDisplay value={minutes} isDanger={minutes < 3} />
 			<span
 				className={`text-[32px] ${
@@ -38,13 +30,72 @@ const ShowCounter: FC<{ hours: number; minutes: number; seconds: number }> = ({
 	);
 };
 
-const CountDownTimer: FC<{ targetTime: number }> = ({ targetTime }) => {
-	const [hours, minutes, seconds] = useCountDown(targetTime);
+const CountDownTimer: FC<{ targetTime: number; socket: any }> = ({
+	targetTime,
+	socket,
+}) => {
+	const [timeInSec, setTimeInSec] = useState(targetTime);
 
-	if (hours + minutes + seconds <= 0) {
+	// 👇️ get number of full minutes
+	const minutes = Math.floor(timeInSec / 60);
+
+	// 👇️ get remainder of seconds
+	const seconds = timeInSec % 60;
+
+	function padTo2Digits(num: number) {
+		return num.toString().padStart(2, '0');
+	}
+
+	useEffect(() => {
+		const interval = setTimeout(() => {
+			if (timeInSec > 0) {
+				setTimeInSec((timeInSec) => timeInSec - 1);
+			}
+		}, 1000);
+		return () => clearTimeout(interval);
+	}, [timeInSec]);
+	const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+	const [timer, setTimer] = useState(result);
+	console.log('outside', result, timer);
+	const timerRef = useRef(result);
+	// useEffect(() => {
+	// 	setTimer(result);
+	// 	// console.log('timer', result);
+	// 	// console.log('timeref', timerRef);
+	// 	// console.log(timer);
+	// }, [seconds]);
+
+	useEffect(() => {
+		// setTimer(result);
+		// const jumper = () => {
+		// 	console.log(timer);
+		// 	console.log('inner', result);
+		// };
+		const interval = setInterval(() => {
+			// jumper();
+			console.log('inner', result, timer);
+		}, 5000);
+
+		return () => clearInterval(interval);
+	}, []);
+
+	// useEffect(() => {
+	// 	console.log(result);
+	// 	const intervalTwo = setInterval(() => {
+	// 		console.log('done');
+	// 		socket.emit('time_observer', result);
+	// 	}, 10000);
+	// 	return () => clearInterval(intervalTwo);
+	// }, [result, socket]);
+	if (timeInSec === 0) {
 		return <ExpiredNotice />;
 	} else {
-		return <ShowCounter hours={hours} minutes={minutes} seconds={seconds} />;
+		return (
+			<>
+				<ShowCounter minutes={minutes} seconds={seconds} />
+				<p>Time remaining</p>
+			</>
+		);
 	}
 };
 

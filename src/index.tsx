@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import { socket, SocketContext } from './context/socket';
 
 let persistor = persistStore(store);
 const root = ReactDOM.createRoot(

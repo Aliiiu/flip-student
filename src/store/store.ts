@@ -28,12 +28,11 @@ const persistedReducer = persistReducer(persistConfig, counterReducer);
 
 export const store = configureStore({
 	reducer: persistedReducer,
-	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware({
-			serializableCheck: {
-				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-			},
-		}),
+	middleware: (getDefaultMiddleware) => {
+		return getDefaultMiddleware({
+			serializableCheck: false,
+		});
+	},
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

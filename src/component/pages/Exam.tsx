@@ -9,11 +9,26 @@ import { useSearchParams } from 'react-router-dom';
 import QuestionService from 'src/services/AssesssmentService';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadDefaultQuestionState } from 'src/feature/counter/counterSlice';
+import { websocket } from 'src/store/websocket';
+import { io } from 'socket.io-client';
 
 const Exam = () => {
 	const { authUser } = auth.use();
 	const [searchParams] = useSearchParams();
 	let dispatch = useDispatch();
+	// const { socket } = websocket.use();
+	const socket = io('wss://demo-assessment-service.flipcbt.com/student', {
+		auth: {
+			token: authUser?.student?.student_id || '',
+		},
+	});
+
+	useEffect(() => {
+		socket.on('authenticated', (data) => {
+			console.log('authenticated => ', data); // you will get
+			// console.log(data);
+		});
+	}, []);
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -38,6 +53,39 @@ const Exam = () => {
 			dispatch(loadDefaultQuestionState(defaultQuestionState));
 		}
 	}, [dispatch, totalQuestions]);
+
+	let newTime = authUser?.obj_time;
+	let setTime = Number(newTime.split(':').shift()) || 1;
+	const Timer = setTime * 60;
+	const [timeInSec, setTimeInSec] = useState(Timer);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (timeInSec > 0) {
+				// console.log(timeInSec);
+				setTimeInSec((timeInSec) => timeInSec - 1);
+			}
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [timeInSec]);
+
+	// console.log(result); // 👉️ "09:25"
+	// useEffect(() => {
+	// 	const minutes = Math.floor(timeInSec / 60);
+	// 	const seconds = timeInSec % 60;
+
+	// 	function padTo2Digits(num: number) {
+	// 		return num.toString().padStart(2, '0');
+	// 	}
+	// 	const result = `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+	// 	console.log(result);
+	// 	const interval = setInterval(() => {
+	// 		console.log(result);
+	// 		console.log(timeInSec);
+	// 		// socket.emit('time_observer', result);
+	// 	}, 10000);
+	// 	return () => clearInterval(interval);
+	// }, [timeInSec]);
 
 	return (
 		<div className=''>
@@ -64,7 +112,7 @@ const Exam = () => {
 								{authUser?.student?.name}
 							</h3>
 						</div>
-						<ExamTimer />
+						<ExamTimer socket={socket} />
 						<div className='mt-[42px]'>
 							{showCalc ? <CalculatorApp /> : <ExamSummary />}
 						</div>

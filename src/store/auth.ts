@@ -4,13 +4,13 @@ interface IAuthUser {
 	[x: string]: any;
 }
 
-interface UserType {
-	assessment: { [x: string]: any };
-	assessment_code: string;
-	assessment_status: string;
-	token: string;
-	student: { [x: string]: any };
-}
+// interface UserType {
+// 	assessment: { [x: string]: any };
+// 	assessment_code: string;
+// 	assessment_status: string;
+// 	token: string;
+// 	student: { [x: string]: any };
+// }
 const initialState = { authUser: {} as IAuthUser };
 
 export const auth = entity(initialState, [persistence('AuthUser')]);

@@ -1,5 +1,5 @@
 import { Popover } from '@headlessui/react';
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { HiOutlineLightBulb } from 'react-icons/hi';
 // import data from 'src/constants/studentData';
 import { auth } from 'src/store/auth';
@@ -9,15 +9,60 @@ import ModalContent from '../UI/ModalContent';
 import PopupContent from '../UI/PopModal';
 import PopUpModal from '../UI/PopModal';
 import AppModal from '../widget/Modal/Modal';
+import { io } from 'socket.io-client';
+import { setSocket, websocket } from 'src/store/websocket';
+// import { socket } from 'src/context/socket';
+
+// export const socket = io(process.env.REACT_APP_SOCKET_URL || '', {
+// 	transports: ['websocket'],
+// 	auth: {
+// 		token: 'isaac001',
+// 	},
+// });
+
+// export const SocketContext = createContext({});
 interface DArray {
 	label: string;
 	value: string;
 }
+
 const VerifyInfo = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, []);
 	const { authUser } = auth.use();
+	// const { socket } = websocket.use();
+	// const [connected, setConnected] = useState(socket.connected);
+	// const [message, setMessage] = useState('');
+
+	// useEffect(() => {
+	// 	socket.connect();
+	// 	socket.on('connect', () => {
+	// 		setConnected(true);
+	// 	});
+	// 	socket.on('disconnect', () => {
+	// 		setConnected(false);
+	// 		socket.connect();
+	// 	});
+
+	// 	return () => {
+	// 		socket.off('connect');
+	// 		socket.off('disconnect');
+	// 		socket.disconnect();
+	// 	};
+	// }, []);
+
+	// useEffect(() => {
+	// 	console.log('socket updated');
+	// 	setSocket(
+	// 		io(process.env.REACT_APP_SOCKET_URL || '', {
+	// 			autoConnect: true,
+	// 			auth: {
+	// 				token: authUser?.student?.name || '',
+	// 			},
+	// 		})
+	// 	);
+	// }, [authUser?.student?.name]);
 	const data: DArray[] = [
 		{
 			label: 'name',
@@ -41,11 +86,11 @@ const VerifyInfo = () => {
 		},
 		{
 			label: 'Exam ID',
-			value: authUser?.assessment?.code || '',
+			value: authUser?.assessment_code || '',
 		},
 		{
 			label: 'Exam Duration',
-			value: authUser?.assessment?.obj_time || '',
+			value: authUser?.obj_time || '',
 		},
 		{
 			label: 'Total Number of Questions',
@@ -66,6 +111,17 @@ const VerifyInfo = () => {
 	// const popUpHandler = () => {
 	// 	setShowPopModal((prevState) => !prevState);
 	// };
+
+	// useEffect(() => {
+	// 	console.log(connected);
+	// 	if (connected) {
+	// 		socket.on('authenticated', (data) => {
+	// 			console.log('authenticated => ', data); // you will get
+	// 			console.log(data);
+	// 		});
+	// 	}
+	// }, [connected, socket]);
+
 	return (
 		<div>
 			<AppModal
@@ -74,14 +130,13 @@ const VerifyInfo = () => {
 				content={
 					<ModalContent
 						content1='Verify your Information'
-						content2='Lorem ipsum dolor sit amet, sectetur adipiscing elit.'
+						content2='Are you ready to start?'
 						link='/exam?index=0'
 						linkContent='Start Exam'
 						onClick={() => setShowModal(false)}
 					/>
 				}
 			/>
-
 			<div className=''>
 				<Header />
 			</div>
@@ -96,7 +151,7 @@ const VerifyInfo = () => {
 							width={203}
 							height={203}
 						/>
-						<div className='mt-[50px] grid gap-y-[50px] gap-x-[120px] grid-cols-3'>
+						<div className='mt-[50px] grid gap-y-[30px] gap-x-[120px] grid-cols-3'>
 							{data.map((item, idx) => (
 								<div key={idx}>
 									<h3 className='text-base capitalize font-semibold'>
@@ -106,7 +161,7 @@ const VerifyInfo = () => {
 								</div>
 							))}
 						</div>
-						<div className='mt-[85px] flex justify-end'>
+						<div className='mt-[45px] flex justify-end'>
 							<div className='w-[80%] flex justify-between'>
 								<button
 									onClick={clickHandler}
