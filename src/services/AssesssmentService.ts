@@ -10,6 +10,9 @@ export const QuestionService = {
 	endExam: async () => {
 		return studentServiceApi().post('/v1/auth/student/end');
 	},
+	reviseLater: async (id: string, data: {}) => {
+		return studentServiceApi().post(`/v1/revise_question/${id}`, data);
+	},
 };
 
 export default QuestionService;

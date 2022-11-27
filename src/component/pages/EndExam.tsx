@@ -15,7 +15,7 @@ const EndExam = () => {
 	}, []);
 
 	const { authUser } = auth.use();
-	const questions = useAppSelector((state) => state.questions);
+	const { questions } = useAppSelector((state) => state.questions);
 	const data: DArray[] = [
 		{
 			label: 'name',
@@ -51,8 +51,7 @@ const EndExam = () => {
 		},
 		{
 			label: 'Attempted Questions',
-			value: questions.filter((item) => item.questionStatus === 'completed')
-				.length,
+			value: questions.filter((item) => item.candidate_answer !== '').length,
 		},
 		{
 			label: 'Assessment Status',

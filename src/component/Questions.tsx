@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import QuestionService from 'src/services/AssesssmentService';
@@ -17,45 +17,59 @@ import AppModal from './widget/Modal/Modal';
 import EndModalContent from './UI/EndModalContent';
 import { BounceLoader } from 'react-spinners';
 
-interface questionModel {
-	id: number;
-	questionText: string;
-	answerOptions: {
-		id?: number | string;
-		label?: string;
-		answerTex: string;
-		isCorrect: boolean;
-		checked?: boolean;
-	}[];
-	questionInstruction?: string;
-	reviewLater?: boolean;
+interface PayloadType {
+	candidate_answer: string;
+	question: string;
+	question_image: string;
+	options: [];
+	question_no: number;
+	type: string;
+	_id: string;
+	revise_later: boolean;
 }
 
-interface PayloadType {
-	candidate_answer?: string;
-	options: string[];
-	question: any;
-	question_image: string;
-	type: string;
+interface NavigateType {
+	index: number;
+	setIndex: Function;
+	setQuestionData: Function;
+	socket: any;
 }
-const Questions = () => {
+
+const initialState: PayloadType = {
+	candidate_answer: '',
+	question: '',
+	question_image: '',
+	question_no: 1,
+	options: [],
+	type: '',
+	_id: '',
+	revise_later: false,
+};
+
+const Questions: FC<NavigateType> = ({
+	index,
+	setIndex,
+	socket,
+	setQuestionData,
+}) => {
 	const { authUser } = auth.use();
 	let dispatch = useDispatch();
-	const questions = useAppSelector((state) => state.questions);
+	const { questions } = useAppSelector(
+		(state: { questions: any }) => state.questions
+	);
 
 	const [progess, setProgress] = useState(1);
-	const [currOption, setCurrOption] = useState<string>('');
-	const [payload, setPayload] = useState<PayloadType>({
-		options: [],
-		question: '<p></p>',
-		question_image: '',
-		type: '',
-	});
-	const [searchParams] = useSearchParams();
-	let index = Number(searchParams.get('index')) || 0;
+	const [payload, setPayload] = useState<PayloadType>(initialState);
+	const [currOption, setCurrOption] = useState<string>(
+		payload.candidate_answer
+	);
+	// const [searchParams] = useSearchParams();
+	// let index = Number(searchParams.get('index')) || 0;
 	const [checked, setChecked] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [answer, setAnswer] = useState('');
+	// const [questionId, setQuestionId] = useState('');
+	let navigate = useNavigate();
 	let [plan, setPlan] = useState('');
 	const { loading, startLoading, stopLoading } = useLoading();
 	const {
@@ -64,43 +78,38 @@ const Questions = () => {
 		stopLoading: stopNewQuestion,
 	} = useLoading();
 
-	const clickHandler = (option: string) => {
-		console.log(option);
+	const clickHandler = (
+		option: string,
+		questions?: any,
+		reviseLater?: boolean
+	) => {
+		// console.log(option);
 		setCurrOption(option);
 		startLoading();
-		QuestionService.saveQuestion({
-			question_index: searchParams.get('index'),
+		console.log({
+			question_index: index,
 			option,
+			revise_later: checked,
+		});
+		QuestionService.saveQuestion({
+			question_index: index,
+			option,
+			revise_later: checked,
 		})
 			.then((res) => {
-				console.log(res?.data?.message);
+				questions && setPayload({ ...questions, candidate_answer: option });
 				toast.success(res?.data?.message);
-				QuestionService.getQuestion({
-					question_index: searchParams.get('index'),
-				})
-					.then((res) => {
-						console.log(res.data);
-						setPayload(res.data.payload.data);
-					})
-					.catch((err) => console.log(err.response));
 			})
 			.catch((err) => console.log(err?.response?.error?.message))
-			.finally(() => stopLoading());
+			.finally(() => {
+				stopLoading();
+			});
 	};
-	let navigate = useNavigate();
+
 	const handleNext = () => {
-		let body = {
-			id: Number(searchParams.get('index')),
-			questionStatus: checked
-				? 'revise'
-				: payload?.candidate_answer || currOption !== ''
-				? 'completed'
-				: 'uncompleted',
-		};
-		dispatch(revision(body));
-		console.log(JSON.stringify(body));
-		if (index >= 0 && index + 1 < questions.length) {
-			navigate(`/exam?index=${index + 1}`);
+		if (index + 1 < authUser?.assessment?.total_questions) {
+			clickHandler(currOption || payload.candidate_answer);
+			setIndex((prevState: number) => prevState + 1);
 		} else {
 			console.log('end');
 			clickHandler(currOption || '');
@@ -110,39 +119,55 @@ const Questions = () => {
 
 	const handlePrev = () => {
 		if (index > 0) {
-			navigate(`/exam?index=${index - 1}`);
+			clickHandler(currOption || payload.candidate_answer);
+			// navigate(`/exam?index=${index - 1}`);
+			setIndex((prevState: number) => prevState - 1);
 		}
 	};
 	useEffect(() => {
-		console.log(searchParams.get('index'));
-		if (index >= 0) {
+		if (index >= 0 && index < authUser?.assessment?.total_questions) {
 			getNewQuestion();
-			QuestionService.getQuestion({ question_index: searchParams.get('index') })
+			QuestionService.getQuestion({
+				question_index: index,
+			})
 				.then((res) => {
-					console.log(res.data);
+					// console.log(res.data);
 					setPayload(res.data.payload.data);
 				})
 				.catch((err) => console.log(err.response))
 				.finally(() => stopNewQuestion());
 		}
-	}, [index, searchParams]);
+	}, [index]);
 
 	useEffect(() => {
 		setChecked(false);
-		setChecked(questions[index]?.questionStatus === 'revise' || false);
+		setChecked(questions[index]?.revise_later || false);
 		setCurrOption('');
-	}, [index, questions, searchParams]);
+	}, [index, questions]);
 
 	useEffect(() => {
-		setProgress(
-			((Number(searchParams.get('index')) + 1) * 100) /
-				authUser.assessment.total_questions
-		);
-	}, [authUser.assessment.total_questions, searchParams]);
+		setProgress(((index + 1) * 100) / authUser.assessment.total_questions);
+	}, [authUser.assessment.total_questions, index]);
 
 	let progressWidth = {
 		width: `${progess}%`,
 	};
+
+	useEffect(() => {
+		sessionStorage.setItem('index', JSON.stringify(index));
+		console.log(questions[index].revise_later);
+		// console.log(
+		// 	questions.filter((item: any) => {
+		// 		return item.question_no === index + 1;
+		// 	})[0]._id
+		// );
+		// setQuestionId(
+		// 	questions.filter((item: any) => {
+		// 		return item.question_no === index + 1;
+		// 	})[0]._id
+		// );
+	}, [index, questions]);
+
 	const endExamHandler = () => {
 		QuestionService.endExam()
 			.then((res) => {
@@ -156,6 +181,16 @@ const Questions = () => {
 				setShowModal(false);
 			});
 	};
+
+	// useEffect(() => {
+	// 	console.log(questionId);
+	// 	const reviseHandler = (id: string) => {
+	// 		QuestionService.reviseLater(id, { revise_later: String(checked) })
+	// 			.then((res) => console.log(res.data))
+	// 			.catch((err) => err.response);
+	// 	};
+	// 	reviseHandler(questionId);
+	// }, [checked]);
 
 	return (
 		<div>
@@ -172,9 +207,7 @@ const Questions = () => {
 			/>
 			<div className='flex justify-between mb-[44px]'>
 				<span className='bg-[#FFAD4A] flex justify-center items-center rounded-[8px] text-[20px] w-[45px] h-[43px] text-white'>
-					{Number(searchParams.get('index')) + 1}
-					{/* {Number(searchParams.get('index'))}/
-					{authUser?.assessment?.total_questions} */}
+					{index + 1}
 				</span>
 				<label className='flex items-center gap-x-[10px]'>
 					<input
@@ -195,9 +228,6 @@ const Questions = () => {
 			{!newQuestion ? (
 				<div className='bg-white mt-[96px] flex flex-col h-auto justify-between'>
 					<div>
-						{/* <p className='mb-[60px] text-[24px]'>
-						{question[CurrQuestion].questionText}
-					</p> */}
 						{parse(payload.question)}
 						{/* <img
 						src={payload.question_image || ''}
@@ -236,7 +266,7 @@ const Questions = () => {
 											<RadioGroup.Option key={plan} value={plan}>
 												{({ active, checked }) => (
 													<li
-														onClick={() => clickHandler(plan)}
+														onClick={() => clickHandler(plan, payload)}
 														className={`border-2 rounded-2xl p-4 flex items-center gap-4 capitalize border-[#C0C0C0] ${
 															payload.candidate_answer === plan || active
 																? 'border-blue-500 text-blue-500'
@@ -265,9 +295,8 @@ const Questions = () => {
 						</div>
 					</div>
 					<div className='flex mt-10 justify-between'>
-						{Number(searchParams.get('index')) > 0 && (
+						{index > 0 && (
 							<Button
-								// dataIndex={CurrQuestion - 1}
 								disabled={loading}
 								onClick={handlePrev}
 								classes='flex justify-center text-[#0075FF] border-2 border-primary items-center py-2 w-[150px] gap-x-[9px]'
@@ -275,11 +304,9 @@ const Questions = () => {
 								<BsArrowLeft /> Previous
 							</Button>
 						)}
-						{Number(searchParams.get('index')) + 1 <=
-							authUser?.assessment?.total_questions && (
+						{index + 1 <= authUser?.assessment?.total_questions && (
 							<Button
 								disabled={loading}
-								// dataIndex={CurrQuestion + 1}
 								onClick={handleNext}
 								classes='flex gap-x-[9px] bg-[#0075ff] text-white justify-center py-2 w-[150px] items-center'
 							>

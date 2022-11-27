@@ -140,8 +140,8 @@ function CalculatorApp() {
 	);
 
 	return (
-		<div className='calculator-grid'>
-			<div className='output'>
+		<div className=' w-full rounded-lg overflow-hidden'>
+			<div className='output w-full'>
 				<div className='prev-operand text-[30px] text-[#0075FF]'>
 					{formatOperand(previousOperand)} {operation}
 				</div>
@@ -149,41 +149,43 @@ function CalculatorApp() {
 					{formatOperand(currentOperand)}
 				</div>
 			</div>
-			<button
-				onClick={() => dispatch({ type: 'clear' })}
-				className='text-white text-[35px] bg-[#0075FF] span-row'
-			>
-				C
-			</button>
-			{/* <OperationBtn operation='%' dispatch={dispatch} /> */}
-			<OperationBtn operation='/' dispatch={dispatch} />
-			<OperationBtn operation='*' dispatch={dispatch} />
-			<DigitBtn digit='7' dispatch={dispatch} />
-			<DigitBtn digit='8' dispatch={dispatch} />
-			<DigitBtn digit='9' dispatch={dispatch} />
-			<OperationBtn operation='-' dispatch={dispatch} />
-			<DigitBtn digit='4' dispatch={dispatch} />
-			<DigitBtn digit='5' dispatch={dispatch} />
-			<DigitBtn digit='6' dispatch={dispatch} />
-			<OperationBtn operation='+' dispatch={dispatch} />
-			<DigitBtn digit='1' dispatch={dispatch} />
-			<DigitBtn digit='2' dispatch={dispatch} />
-			<DigitBtn digit='3' dispatch={dispatch} />
-			{/* <OperationBtn operation='=' classes='span-two' dispatch={dispatch} /> */}
-			<button
-				className='text-white text-[35px] flex justify-center items-center bg-[#0075FF] span-two'
-				onClick={() => dispatch({ type: ACTIONS.EVALUATE })}
-			>
-				=
-			</button>
-			<DigitBtn digit='0' dispatch={dispatch} />
-			<DigitBtn digit='.' dispatch={dispatch} />
-			<button
-				onClick={() => dispatch({ type: 'delete-digit' })}
-				className='text-white text-[35px] flex justify-center items-center bg-[#0075FF]'
-			>
-				<img src='/images/cancel.png' alt='' width={'30px'} />
-			</button>
+			<div className='calculator-grid'>
+				<button
+					onClick={() => dispatch({ type: 'clear' })}
+					className='text-white text-[35px] bg-[#0075FF] span-row'
+				>
+					C
+				</button>
+				{/* <OperationBtn operation='%' dispatch={dispatch} /> */}
+				<OperationBtn operation='/' dispatch={dispatch} />
+				<OperationBtn operation='*' dispatch={dispatch} />
+				<DigitBtn digit='7' dispatch={dispatch} />
+				<DigitBtn digit='8' dispatch={dispatch} />
+				<DigitBtn digit='9' dispatch={dispatch} />
+				<OperationBtn operation='-' dispatch={dispatch} />
+				<DigitBtn digit='4' dispatch={dispatch} />
+				<DigitBtn digit='5' dispatch={dispatch} />
+				<DigitBtn digit='6' dispatch={dispatch} />
+				<OperationBtn operation='+' dispatch={dispatch} />
+				<DigitBtn digit='1' dispatch={dispatch} />
+				<DigitBtn digit='2' dispatch={dispatch} />
+				<DigitBtn digit='3' dispatch={dispatch} />
+				{/* <OperationBtn operation='=' classes='span-two' dispatch={dispatch} /> */}
+				<button
+					className='text-white text-[35px] flex justify-center items-center bg-[#0075FF] span-two'
+					onClick={() => dispatch({ type: ACTIONS.EVALUATE })}
+				>
+					=
+				</button>
+				<DigitBtn digit='0' dispatch={dispatch} />
+				<DigitBtn digit='.' dispatch={dispatch} />
+				<button
+					onClick={() => dispatch({ type: 'delete-digit' })}
+					className='text-white text-[35px] flex justify-center items-center bg-[#0075FF]'
+				>
+					<img src='/images/cancel.png' alt='' width={'30px'} />
+				</button>
+			</div>
 		</div>
 	);
 }

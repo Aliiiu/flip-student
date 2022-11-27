@@ -103,24 +103,10 @@ const VerifyInfo = () => {
 	];
 
 	const [showModal, setShowModal] = useState<boolean | null>(false);
-	const [showPopModal, setShowPopModal] = useState<boolean | null>(false);
 
 	const clickHandler = () => {
 		setShowModal(true);
 	};
-	// const popUpHandler = () => {
-	// 	setShowPopModal((prevState) => !prevState);
-	// };
-
-	// useEffect(() => {
-	// 	console.log(connected);
-	// 	if (connected) {
-	// 		socket.on('authenticated', (data) => {
-	// 			console.log('authenticated => ', data); // you will get
-	// 			console.log(data);
-	// 		});
-	// 	}
-	// }, [connected, socket]);
 
 	return (
 		<div>
@@ -131,7 +117,7 @@ const VerifyInfo = () => {
 					<ModalContent
 						content1='Verify your Information'
 						content2='Are you ready to start?'
-						link='/exam?index=0'
+						link='/exam'
 						linkContent='Start Exam'
 						onClick={() => setShowModal(false)}
 					/>
@@ -167,7 +153,9 @@ const VerifyInfo = () => {
 									onClick={clickHandler}
 									className='text-white rounded-lg text-lg w-[50%] py-3 bg-[#0075FF]'
 								>
-									Start Exam
+									{authUser?.assessment_status === 'inprogress'
+										? 'Continue Exam'
+										: 'Start Exam'}
 								</button>
 								<Popover className='relative'>
 									<Popover.Button className='text-white text-sm flex gap-x-[5px] items-center rounded-[40px] px-[30px] py-3 hint_shadow outline-none bg-[#FFAD4A]'>

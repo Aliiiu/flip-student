@@ -4,9 +4,10 @@ const ModalContent: React.FC<{
 	onClick: () => void;
 	content1?: string;
 	content2?: string;
-	link: string;
+	link?: string;
+	btnAction?: () => void;
 	linkContent: string;
-}> = ({ onClick, content1, content2, link, linkContent }) => {
+}> = ({ onClick, content1, content2, link, btnAction, linkContent }) => {
 	return (
 		<div className='flex w-full bg-white flex-col items-center gap-y-[24px] verify_modal_card'>
 			<div className='fixed right-0 top-0'>
@@ -28,12 +29,22 @@ const ModalContent: React.FC<{
 				>
 					Cancel
 				</button>
-				<Link
-					to={link}
-					className='bg-[#0075FF] py-3 px-6 rounded-[8px] text-white'
-				>
-					{linkContent}
-				</Link>
+				{link && (
+					<Link
+						to={link}
+						className='bg-[#0075FF] py-2 px-4 rounded-[8px] text-white'
+					>
+						{linkContent}
+					</Link>
+				)}
+				{btnAction && (
+					<button
+						onClick={btnAction}
+						className='border py-2 px-4 rounded-[8px] bg-[#0075FF] text-white'
+					>
+						{linkContent}
+					</button>
+				)}
 			</div>
 		</div>
 	);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Button from './widget/Button';
 import ErrorModal from './UI/ErrorModal';
 import { auth } from 'src/store/auth';
@@ -8,12 +8,17 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppSelector } from 'src/hook/useToolkit';
 import AppModal from './widget/Modal/Modal';
 import QuestionService from 'src/services/AssesssmentService';
-
-const ExamSummary = () => {
+import { getSessionStorageOrDefault } from 'src/utils';
+interface NavigateType {
+	index: number;
+	setIndex: Function;
+}
+const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 	const { authUser } = auth.use();
-	const questions = useAppSelector((state) => state.questions);
+	const { questions } = useAppSelector((state) => state.questions);
 	let navigate = useNavigate();
 	const [showModal, setShowModal] = useState<boolean | null>(false);
+	// const [index, setIndex] = useState(getSessionStorageOrDefault('index', 0));
 	// const [searchParams] = useSearchParams();
 
 	// useEffect(() => {
@@ -56,10 +61,7 @@ const ExamSummary = () => {
 							<h6 className='text-[14px]'>Attempted</h6>
 						</div>{' '}
 						<span className='text-[14px]'>
-							{
-								questions.filter((item) => item.questionStatus === 'completed')
-									.length
-							}
+							{questions.filter((item) => item.candidate_answer !== '').length}
 						</span>
 					</div>
 					<div className='flex justify-between'>
@@ -68,10 +70,7 @@ const ExamSummary = () => {
 							<h6 className='text-[14px]'>Revise Later</h6>
 						</div>{' '}
 						<span className='text-[14px]'>
-							{
-								questions.filter((item) => item.questionStatus === 'revise')
-									.length
-							}
+							{questions.filter((item) => item.revise_later === true).length}
 						</span>
 					</div>
 					<div className='flex justify-between'>
@@ -81,8 +80,7 @@ const ExamSummary = () => {
 						</div>{' '}
 						<span className='text-[14px]'>
 							{questions.length -
-								questions.filter((item) => item.questionStatus === 'completed')
-									.length}
+								questions.filter((item) => item.candidate_answer !== '').length}
 						</span>
 					</div>
 				</div>
@@ -108,17 +106,20 @@ const ExamSummary = () => {
 
 						return (
 							<div
-								onClick={() => navigate(`/exam?index=${item.id}`)}
+								onClick={() => {
+									sessionStorage.setItem('index', JSON.stringify(idx));
+									setIndex(idx);
+								}}
 								className={`${
-									item.questionStatus === 'revise'
+									item.revise_later
 										? 'bg-[#FFAD4A]'
-										: item.questionStatus === 'completed'
+										: item.candidate_answer !== ''
 										? 'bg-[#0075ff]'
 										: 'bg-[#C0C0C0]'
 								} rounded-[8px] text-[14px] cursor-pointer text-white flex justify-center items-center h-[40px] w-[40px]`}
 								key={idx}
 							>
-								{item.id + 1}
+								{idx + 1}
 							</div>
 						);
 					})}

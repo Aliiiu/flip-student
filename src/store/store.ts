@@ -3,12 +3,20 @@ import counterReducer from '../feature/counter/counterSlice';
 // import { persistReducer } from 'reduxjs-toolkit-persist';
 // import storage from 'reduxjs-toolkit-persist/lib/storage';
 import { configureStore } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
+import {
+	FLUSH,
+	PAUSE,
+	PERSIST,
+	persistReducer,
+	PURGE,
+	REGISTER,
+	REHYDRATE,
+} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import thunk from 'redux-thunk';
+import rootReducer from 'src/feature/rootReducer';
 
 const persistConfig = {
-	key: 'question',
+	key: 'root',
 	storage,
 };
 
@@ -16,12 +24,17 @@ const persistConfig = {
 // 	counter: counterReducer,
 // });
 
-const persistedReducer = persistReducer(persistConfig, counterReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
 	reducer: persistedReducer,
-	devTools: process.env.NODE_ENV !== 'production',
-	middleware: [thunk],
+	middleware: (getDefaultMiddleware) => {
+		return getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+			},
+		});
+	},
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

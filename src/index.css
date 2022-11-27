@@ -157,8 +157,8 @@ p {
 
 .calculator-grid {
 	display: grid;
-	grid-template-columns: repeat(4, 6em);
-	grid-template-rows: minmax(7em, auto) repeat(5, 6em);
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: minmax(7em, auto) repeat(4, 6em);
 }
 
 .span-two {

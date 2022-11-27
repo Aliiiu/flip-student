@@ -22,7 +22,12 @@ const Header = () => {
 					<ModalContent
 						// content1='Verify your Information'
 						content2='Are you sure you want to end your exam'
-						link='/'
+						// link='/'
+						btnAction={() => {
+							logout(() => navigate('/'));
+							sessionStorage.clear();
+							localStorage.clear();
+						}}
 						linkContent='End Exam'
 						onClick={() => setShowModal(false)}
 					/>
