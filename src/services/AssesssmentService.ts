@@ -1,3 +1,4 @@
+import adminServiceApi from 'src/utils/adminServiceApi';
 import studentServiceApi from 'src/utils/studentServiceApi';
 
 export const QuestionService = {
@@ -12,6 +13,9 @@ export const QuestionService = {
 	},
 	reviseLater: async (id: string, data: {}) => {
 		return studentServiceApi().post(`/v1/revise_question/${id}`, data);
+	},
+	schoolDetails: async () => {
+		return adminServiceApi().get('/v1/school-details');
 	},
 };
 

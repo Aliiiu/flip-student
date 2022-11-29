@@ -155,17 +155,7 @@ const Questions: FC<NavigateType> = ({
 
 	useEffect(() => {
 		sessionStorage.setItem('index', JSON.stringify(index));
-		console.log(questions[index].revise_later);
-		// console.log(
-		// 	questions.filter((item: any) => {
-		// 		return item.question_no === index + 1;
-		// 	})[0]._id
-		// );
-		// setQuestionId(
-		// 	questions.filter((item: any) => {
-		// 		return item.question_no === index + 1;
-		// 	})[0]._id
-		// );
+		// console.log(questions[index]?.revise_later);
 	}, [index, questions]);
 
 	const endExamHandler = () => {
@@ -181,16 +171,6 @@ const Questions: FC<NavigateType> = ({
 				setShowModal(false);
 			});
 	};
-
-	// useEffect(() => {
-	// 	console.log(questionId);
-	// 	const reviseHandler = (id: string) => {
-	// 		QuestionService.reviseLater(id, { revise_later: String(checked) })
-	// 			.then((res) => console.log(res.data))
-	// 			.catch((err) => err.response);
-	// 	};
-	// 	reviseHandler(questionId);
-	// }, [checked]);
 
 	return (
 		<div>

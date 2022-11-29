@@ -130,7 +130,7 @@ const Exam = () => {
 						</div>
 					</div>
 				</div>
-				<div className='flex justify-end mb-[114px] mt-[155px] w-full'>
+				<div className='flex justify-end mb-[114px] mt-[35px] w-full'>
 					<button
 						onClick={showCalculator}
 						className='bg-[#FFAD4A] flex justify-center items-center rounded-[100%] h-[100px] w-[100px]'

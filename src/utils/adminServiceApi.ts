@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAuthToken, isLoggedIn, logout } from './AuthUtils';
 
-const studentServiceApi = () => {
+const adminServiceApi = () => {
 	let headers = {};
 	if (isLoggedIn()) {
 		headers = {
@@ -9,7 +9,7 @@ const studentServiceApi = () => {
 		};
 	}
 	const axiosInstance = axios.create({
-		baseURL: process.env.REACT_APP_ASSESSMENT_BASE_URL || '',
+		baseURL: process.env.REACT_APP_ADMIN_BASE_URL || '',
 		timeout: 30000,
 		headers,
 	});
@@ -33,4 +33,4 @@ const studentServiceApi = () => {
 	return axiosInstance;
 };
 
-export default studentServiceApi;
+export default adminServiceApi;

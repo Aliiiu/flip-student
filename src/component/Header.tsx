@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import QuestionService from 'src/services/AssesssmentService';
 import { logout } from 'src/utils/AuthUtils';
 import ModalContent from './UI/ModalContent';
 import AppModal from './widget/Modal/Modal';
@@ -12,7 +13,21 @@ const Header = () => {
 	const location = useLocation();
 	const [showModal, setShowModal] = useState<boolean | null>(false);
 	let navigate = useNavigate();
+	const [schoolName, setSchoolName] = useState('');
 	const showLogoutBtn = location.pathname !== '/' ? true : false;
+
+	const getSchoolDetails = () => {
+		QuestionService.schoolDetails()
+			.then((res) => {
+				// console.log(res.data);
+				setSchoolName(res.data.payload.data.school_name);
+			})
+			.catch((err) => console.error(err.response));
+	};
+	useEffect(() => {
+		getSchoolDetails();
+	}, []);
+
 	return (
 		<header className='flex justify-center header_shadow py-[15px] lg:px-10 bg-white'>
 			<AppModal
@@ -36,7 +51,7 @@ const Header = () => {
 			<div className='w-full container'>
 				<div className='flex items-center justify-between'>
 					<h4 className='text-xl text-[#0075FF] font-bold'>
-						Our Savior International School
+						{schoolName || ''}
 					</h4>
 					<div>
 						<Link to={'/'}>
