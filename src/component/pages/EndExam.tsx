@@ -68,7 +68,9 @@ const EndExam = () => {
 				<div className='pl-[255px] pt-[83px] pb-[213px] pr-[123px]'>
 					<div>
 						<img
-							src={'/images/user1.png'}
+							src={
+								authUser?.student?.display_picture_url || '/images/user1.png'
+							}
 							alt='studentID'
 							width={203}
 							height={203}

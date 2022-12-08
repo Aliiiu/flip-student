@@ -25,14 +25,14 @@ const ModalContent: React.FC<{
 			<div className='flex items-center justify-between gap-6 w-full'>
 				<button
 					onClick={onClick}
-					className='border py-3 px-6 rounded-[8px] text-[#E25C5C] border-[#E25C5C]'
+					className='border py-2 px-4 flex-1 rounded-[8px] text-white bg-[#E25C5C]'
 				>
 					Cancel
 				</button>
 				{link && (
 					<Link
 						to={link}
-						className='bg-[#0075FF] py-2 px-4 rounded-[8px] text-white'
+						className='bg-[#0075FF] flex-1 py-2 px-4 rounded-[8px] text-white'
 					>
 						{linkContent}
 					</Link>
@@ -40,7 +40,7 @@ const ModalContent: React.FC<{
 				{btnAction && (
 					<button
 						onClick={btnAction}
-						className='border py-2 px-4 rounded-[8px] bg-[#0075FF] text-white'
+						className='border py-2 px-4 flex-1 rounded-[8px] bg-[#0075FF] text-white'
 					>
 						{linkContent}
 					</button>

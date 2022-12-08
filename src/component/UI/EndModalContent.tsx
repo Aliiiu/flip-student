@@ -19,18 +19,18 @@ const EndModalContent: FC<Props> = (Props) => {
 			</div>
 			{/* <h2 className='font-semibold text-[24px]'>{content1}</h2> */}
 			<p className='text-center text-[20px]'>
-				Are you sure you want to end your exam
+				Are you sure you want to end your exam?
 			</p>
-			<div className='flex items-center justify-between w-full'>
+			<div className='flex items-center justify-between gap-6 w-full'>
 				<button
 					onClick={Props.onClick}
-					className='border py-[14px] px-[45px] rounded-[8px] text-[#E25C5C] border-[#E25C5C]'
+					className='border py-2 px-4 rounded-[8px] flex-1 text-white bg-[#E25C5C]'
 				>
 					Cancel
 				</button>
 				<button
 					onClick={Props.onPress}
-					className='bg-[#0075FF] py-[14px] rounded-[8px] px-[45px] text-white'
+					className='bg-[#0075FF] py-2 rounded-[8px] px-4 flex-1 text-white'
 				>
 					End Exam
 				</button>

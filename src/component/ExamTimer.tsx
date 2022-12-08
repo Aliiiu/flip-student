@@ -8,8 +8,10 @@ const ExamTimer: FC<{
 }> = ({ socket }) => {
 	const { authUser } = auth.use();
 	let newTime = authUser?.obj_time;
-	let setTime = Number(newTime.split(':').shift()) || 1;
-	const Timer = setTime * 60;
+	let setMin = Number(newTime.split(':')[0]) || 1;
+	let setSecs = Number(newTime.split(':')[1]) || 59;
+	console.log(newTime.split(':'));
+	const Timer = setMin * 60 + setSecs;
 	// console.log(Timer);
 	return (
 		<div className='flex items-start mt-[42px] justify-center examTimeCard'>

@@ -62,15 +62,15 @@ const Login = () => {
 			});
 	};
 	return (
-		<div className='flex items-center justify-center min-h-screen'>
+		<div className='flex items-center justify-center h-screen'>
 			<ToastContainer />
-			<div className='card w-[500px] max-w-[85%] '>
-				<h2 className='text-center font-semibold mb-[25px] text-[32px]'>
+			<div className='card w-[450px] max-w-[85%] '>
+				<h2 className='text-center font-semibold mb-[15px] text-2xl'>
 					STUDENT LOGIN
 				</h2>
 				<form onSubmit={handleSubmit}>
 					<div className='flex flex-col'>
-						<label htmlFor='studentId' className={`block mb-[5px] text-[20px]`}>
+						<label htmlFor='studentId' className={`block mb-[5px] text-lg`}>
 							Student ID
 						</label>
 						<div
@@ -87,8 +87,8 @@ const Login = () => {
 							/>
 						</div>
 					</div>
-					<div className='flex flex-col mt-[30px]'>
-						<label htmlFor='studentId' className={`block mb-[5px] text-[20px]`}>
+					<div className='flex flex-col mt-[20px]'>
+						<label htmlFor='studentId' className={`block mb-[5px] text-lg`}>
 							Exam ID
 						</label>
 						<div
@@ -109,7 +109,7 @@ const Login = () => {
 					<button
 						type='submit'
 						disabled={loading}
-						className='bg-[#0075FF] text-white text-[20px] rounded-[8px] py-[14px] disabled:bg-opacity-30 disabled:cursor-not-allowed mt-[49px] w-full'
+						className='bg-[#0075FF] text-white text-lg rounded-[8px] py-3 disabled:bg-opacity-30 disabled:cursor-not-allowed mt-[49px] w-full'
 					>
 						{loading ? <ClipLoader color='#FFF' size={25} /> : 'Login'}
 					</button>

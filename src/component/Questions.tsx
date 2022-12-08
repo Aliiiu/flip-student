@@ -290,7 +290,9 @@ const Questions: FC<NavigateType> = ({
 								onClick={handleNext}
 								classes='flex gap-x-[9px] bg-[#0075ff] text-white justify-center py-2 w-[150px] items-center'
 							>
-								Next
+								{index + 1 >= authUser?.assessment?.total_questions
+									? 'End Exam'
+									: 'Next'}
 								<BsArrowRight />
 							</Button>
 						)}

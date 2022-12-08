@@ -52,7 +52,7 @@ const CountDownTimer: FC<{ targetTime: number; socket: any }> = ({
 				setTimeInSec((timeInSec) => timeInSec - 1);
 				if (seconds % 5 === 0) {
 					console.log('inner', result);
-					socket.emit('time_observer', '10:00');
+					socket.emit('time_observer', result);
 				}
 			}
 		}, 1000);

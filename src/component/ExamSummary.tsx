@@ -61,16 +61,20 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 							<h6 className='text-[14px]'>Attempted</h6>
 						</div>{' '}
 						<span className='text-[14px]'>
-							{questions.filter((item) => item.candidate_answer !== '').length}
+							{
+								questions.filter((item) => item?.candidate_answer !== undefined)
+									.length
+							}
 						</span>
 					</div>
+					{typeof questions[0]?.candidate_answer}
 					<div className='flex justify-between'>
 						<div className='flex gap-x-[10px] items-center'>
 							<span className='bg-[#FFAD4A] h-[14px] rounded-[100%] w-[14px]'></span>{' '}
 							<h6 className='text-[14px]'>Revise Later</h6>
 						</div>{' '}
 						<span className='text-[14px]'>
-							{questions.filter((item) => item.revise_later === true).length}
+							{questions.filter((item) => item?.revise_later === true).length}
 						</span>
 					</div>
 					<div className='flex justify-between'>
@@ -80,7 +84,8 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 						</div>{' '}
 						<span className='text-[14px]'>
 							{questions.length -
-								questions.filter((item) => item.candidate_answer !== '').length}
+								questions.filter((item) => item?.candidate_answer !== undefined)
+									.length}
 						</span>
 					</div>
 				</div>
@@ -113,7 +118,7 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 								className={`${
 									item.revise_later
 										? 'bg-[#FFAD4A]'
-										: item.candidate_answer !== ''
+										: item.candidate_answer !== undefined
 										? 'bg-[#0075ff]'
 										: 'bg-[#C0C0C0]'
 								} rounded-[8px] text-[14px] cursor-pointer text-white flex justify-center items-center h-[40px] w-[40px]`}
