@@ -13,14 +13,14 @@ const Header = () => {
 	const location = useLocation();
 	const [showModal, setShowModal] = useState<boolean | null>(false);
 	let navigate = useNavigate();
-	const [schoolName, setSchoolName] = useState('');
+	const [schoolName, setSchoolName] = useState<any>({});
 	const showLogoutBtn = location.pathname !== '/' ? true : false;
 
 	const getSchoolDetails = () => {
 		QuestionService.schoolDetails()
 			.then((res) => {
 				// console.log(res.data);
-				setSchoolName(res.data.payload.data.school_name);
+				setSchoolName(res.data.payload.data);
 			})
 			.catch((err) => console.error(err.response));
 	};
@@ -29,7 +29,7 @@ const Header = () => {
 	}, []);
 
 	return (
-		<header className='flex justify-center header_shadow py-[15px] lg:px-10 bg-white'>
+		<header className='flex justify-center header_shadow h-[7%] lg:px-10 bg-white'>
 			<AppModal
 				open={showModal}
 				onClose={() => setShowModal(false)}
@@ -49,10 +49,17 @@ const Header = () => {
 				}
 			/>
 			<div className='w-full container'>
-				<div className='flex items-center justify-between'>
-					<h4 className='text-xl text-[#0075FF] font-bold'>
-						{schoolName || ''}
-					</h4>
+				<div className='flex items-center h-full justify-between'>
+					<div className='flex items-center gap-2'>
+						<img
+							src={schoolName.school_logo_url}
+							alt=''
+							className='h-[63px] rounded-full object-contain w-[63px]'
+						/>
+						<h4 className='text-xl text-[#0075FF] font-bold'>
+							{schoolName.school_name || ''}
+						</h4>
+					</div>
 					<div>
 						<Link to={'/'}>
 							<img

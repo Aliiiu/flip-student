@@ -51,7 +51,13 @@ const EndExam = () => {
 		},
 		{
 			label: 'Attempted Questions',
-			value: questions.filter((item) => item.candidate_answer !== '').length,
+			value: questions.filter(
+				(item) =>
+					(item?.candidate_answer !== undefined &&
+						(item?.candidate_answer as string).length > 0) ||
+					(item?.selectedOption !== undefined &&
+						item?.selectedOption.length > 0)
+			).length,
 		},
 		{
 			label: 'Assessment Status',
@@ -60,12 +66,10 @@ const EndExam = () => {
 	];
 
 	return (
-		<div>
-			<div className=''>
-				<Header />
-			</div>
-			<div className='container'>
-				<div className='pl-[255px] pt-[83px] pb-[213px] pr-[123px]'>
+		<div className='h-screen'>
+			<Header />
+			<main className='container h-[93%]'>
+				<div className='pl-[255px] pt-[43px] pb-[0px] pr-[123px]'>
 					<div>
 						<img
 							src={
@@ -97,7 +101,7 @@ const EndExam = () => {
 						</div>
 					</div>
 				</div>
-			</div>
+			</main>
 		</div>
 	);
 };

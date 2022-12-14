@@ -1,8 +1,8 @@
-import { createSlice, current } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface QuestionSummary {
 	candidate_answer: string;
+	selectedOption: string;
 	question: string;
 	question_image: string;
 	options: [];
@@ -10,6 +10,7 @@ interface QuestionSummary {
 	type: string;
 	_id: string;
 	revise_later: boolean;
+	reviseOption: boolean;
 }
 export interface CounterState {
 	questions: QuestionSummary[];
@@ -24,7 +25,20 @@ export const counterSlice = createSlice({
 	initialState,
 	reducers: {
 		questionAnswered: (state: CounterState, { payload }) => {
-			state.questions = [...state.questions, payload];
+			// state.questions = [...state.questions, payload];
+			// const questionId = state.questions.findIndex(
+			// 	(q: QuestionSummary) => q._id === payload.questions._id
+			// );
+			// console.log(payload);
+			const questionIndex = payload.data.question_index;
+			const currentState: QuestionSummary[] = [...state.questions];
+			currentState[questionIndex] = {
+				...payload.questions,
+				selectedOption: payload.data.option,
+			};
+			// console.log(currentState);
+			state.questions = currentState;
+			// console.log(currentState);
 		},
 		revision: (state: CounterState, { payload }) => {
 			// const currentState = JSON.parse(JSON.stringify(current(state)));
@@ -34,12 +48,17 @@ export const counterSlice = createSlice({
 			// currentState.questions[questionIndex] = payload;
 
 			// console.log(typeof questionIndex);
-			const questionIndex = state.questions.findIndex(
-				(q: QuestionSummary) => q._id === payload._id
-			);
+			// const questionIndex = state.questions.findIndex(
+			// 	(q: QuestionSummary) => q._id === payload._id
+			// );
+			// console.log(payload);
+			const questionIndex = payload.index;
 			const currentState: QuestionSummary[] = [...state.questions];
-			currentState[questionIndex] = payload;
-
+			currentState[questionIndex] = {
+				...payload.questions,
+				reviseOption: payload.revise_option,
+			};
+			// console.log(currentState[questionIndex]);
 			state.questions = currentState;
 			// state.questions = [...state.questions, ...currentState.questions];
 		},

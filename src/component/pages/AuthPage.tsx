@@ -23,10 +23,8 @@ const AuthPage = () => {
 		setError(false);
 	};
 	return (
-		<div>
-			<div className=''>
-				<Header />
-			</div>
+		<div className='h-screen mainBg'>
+			<Header />
 			{error && (
 				<LoginModal
 					message={modalMessage.message}
@@ -36,9 +34,9 @@ const AuthPage = () => {
 					onClick={closeModalHandler}
 				/>
 			)}
-			<main>
-				<div className='mainBg'>
-					<div className='container'>
+			<main className='flex items-center justify-center h-[93%]'>
+				<div className=''>
+					<div className=''>
 						<Login />
 					</div>
 				</div>

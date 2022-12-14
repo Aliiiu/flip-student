@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { websocket } from 'src/store/websocket';
-import { useCountDown } from '../hook/useCounterDown';
+import { updateTimer } from 'src/feature/timer/timerSlice';
+import { useAppDispatch } from 'src/hook/useToolkit';
 import DateTimeDisplay from './DateTimeDisplay';
 
 const ExpiredNotice = () => {
@@ -35,6 +35,7 @@ const CountDownTimer: FC<{ targetTime: number; socket: any }> = ({
 	socket,
 }) => {
 	const [timeInSec, setTimeInSec] = useState(targetTime);
+	let dispatch = useAppDispatch();
 
 	// 👇️ get number of full minutes
 	const minutes = Math.floor(timeInSec / 60);
@@ -53,6 +54,7 @@ const CountDownTimer: FC<{ targetTime: number; socket: any }> = ({
 				if (seconds % 5 === 0) {
 					console.log('inner', result);
 					socket.emit('time_observer', result);
+					dispatch(updateTimer(result));
 				}
 			}
 		}, 1000);

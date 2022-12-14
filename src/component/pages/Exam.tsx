@@ -9,12 +9,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import QuestionService from 'src/services/AssesssmentService';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadDefaultQuestionState } from 'src/feature/counter/counterSlice';
-import { websocket } from 'src/store/websocket';
 import { io } from 'socket.io-client';
 import { getSessionStorageOrDefault } from 'src/utils';
 import ModalContent from '../UI/ModalContent';
 import AppModal from '../widget/Modal/Modal';
 import { toast, ToastContainer } from 'react-toastify';
+import { logout } from 'src/utils/AuthUtils';
 
 const Exam = () => {
 	const { authUser } = auth.use();
@@ -23,6 +23,7 @@ const Exam = () => {
 		auth: {
 			token: authUser?.student?.student_id || '',
 		},
+		// transports: ['websocket'],
 	});
 	const [showCalc, setShowCalc] = useState(false);
 	const [index, setIndex] = useState(getSessionStorageOrDefault('index', 0));
@@ -32,19 +33,20 @@ const Exam = () => {
 	let navigate = useNavigate();
 
 	useEffect(() => {
-		socket.on('authenticated', (data) => {
-			console.log('authenticated => ', data); // you will get
-			setQuestionData(data.candidate_questions);
-		});
-		socket.on('connect_error', (err) => {
-			toast.warning(err.message);
-		});
+		// socket.on('authenticated', (data) => {
+		// 	console.log('authenticated => ', data); // you will get
+		// 	setQuestionData(data.candidate_questions);
+		// });
+		// console.log(index);
+		// socket.on('connect_error', (err) => {
+		// 	// toast.warning(err.message);
+		// });
 		socket.on('logout', (message) => {
 			console.log('You are logged out by the admin => ', message); // you will get
 			setMessage(message);
 			setShowModal(true);
 		});
-	}, [index]);
+	}, []);
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -55,23 +57,27 @@ const Exam = () => {
 	};
 
 	useEffect(() => {
-		if (questionData.length > 0) {
-			dispatch(loadDefaultQuestionState(questionData));
-			console.log(questionData);
-		}
-	}, [dispatch, questionData]);
+		const handleContextmenu = (e: any) => {
+			e.preventDefault();
+		};
+		document.addEventListener('contextmenu', handleContextmenu);
+		return function cleanup() {
+			document.removeEventListener('contextmenu', handleContextmenu);
+		};
+	}, []);
 
 	return (
-		<div className=''>
-			<ToastContainer />
-			<div className=''>
-				<Header />
-			</div>
+		<div className='h-screen'>
+			{/* <ToastContainer /> */}
+			<Header />
 			<AppModal
 				open={showModal}
 				onClose={() => {
-					// setShowModal(false);
-					navigate('/');
+					// navigate('/');
+					// socket.close();
+					logout(() => navigate('/'));
+					sessionStorage.clear();
+					localStorage.clear();
 				}}
 				content={
 					<div className='flex w-full bg-white flex-col items-center gap-y-[24px] verify_modal_card'>
@@ -83,8 +89,9 @@ const Exam = () => {
 								height='30px'
 								className='cursor-pointer'
 								onClick={() => {
-									// setShowModal(false);
-									navigate('/');
+									logout(() => navigate('/'));
+									sessionStorage.clear();
+									localStorage.clear();
 								}}
 							/>
 						</div>
@@ -95,7 +102,7 @@ const Exam = () => {
 					</div>
 				}
 			/>
-			<div className='min-h-screen container pt-[77px] lg:px-10'>
+			<main className='h-[93%] container pt-[47px] lg:px-10'>
 				<div className='flex justify-between '>
 					<div className='w-[60%] flex flex-col justify-between'>
 						<div>
@@ -103,7 +110,7 @@ const Exam = () => {
 								index={index}
 								setIndex={setIndex}
 								socket={socket}
-								setQuestionData={setQuestionData}
+								// setQuestionData={setQuestionData}
 							/>
 						</div>
 					</div>
@@ -130,7 +137,7 @@ const Exam = () => {
 						</div>
 					</div>
 				</div>
-				<div className='flex justify-end mb-[114px] mt-[35px] w-full'>
+				<div className='flex justify-end mb-[0px] mt-[35px] w-full'>
 					<button
 						onClick={showCalculator}
 						className='bg-[#FFAD4A] flex justify-center items-center rounded-[100%] h-[100px] w-[100px]'
@@ -143,7 +150,7 @@ const Exam = () => {
 						/>
 					</button>
 				</div>
-			</div>
+			</main>
 		</div>
 	);
 };

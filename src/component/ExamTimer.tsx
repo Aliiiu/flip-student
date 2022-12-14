@@ -1,5 +1,6 @@
 import { FC, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
+import { useAppSelector } from 'src/hook/useToolkit';
 import { auth } from 'src/store/auth';
 import CountDownTimer from './CountDownTImer';
 
@@ -7,10 +8,12 @@ const ExamTimer: FC<{
 	socket: any;
 }> = ({ socket }) => {
 	const { authUser } = auth.use();
-	let newTime = authUser?.obj_time;
+	const { timer } = useAppSelector((state: { timer: any }) => state.timer);
+	// let newTime = timer || authUser?.obj_time;
+	let newTime = '20:00';
 	let setMin = Number(newTime.split(':')[0]) || 1;
-	let setSecs = Number(newTime.split(':')[1]) || 59;
-	console.log(newTime.split(':'));
+	let setSecs = Number(newTime.split(':')[1]);
+	// console.log(newTime.split(':'));
 	const Timer = setMin * 60 + setSecs;
 	// console.log(Timer);
 	return (

@@ -8,12 +8,9 @@ import { auth, setAuthUser } from 'src/store/auth';
 import useLoading from 'src/hook/useLoading';
 import { ClipLoader } from 'react-spinners';
 import { toast, ToastContainer } from 'react-toastify';
-import { setSocket, websocket } from 'src/store/websocket';
-import { io } from 'socket.io-client';
 
 const Login = () => {
 	const navigate = useNavigate();
-	const { socket } = websocket.use();
 	const [formState, setFormState] = useState({
 		studentId: '',
 		examId: '',
@@ -38,19 +35,7 @@ const Login = () => {
 			.then((res: any) => {
 				setAuthToken(res?.data?.payload?.data?.token);
 				console.log(res?.data?.payload);
-				// setSocket(
-				// 	io('wss://demo-assessment-service.flipcbt.com/student' || '', {
-				// 		autoConnect: true,
-				// 		auth: {
-				// 			token: studentId || '',
-				// 		},
-				// 	})
-				// );
 				setAuthUser(res?.data?.payload?.data);
-				// socket.on('authenticated', (data) => {
-				// 	console.log('authenticated => ', data); // you will get
-				// 	console.log(data);
-				// });
 				navigate('/verify-info');
 			})
 			.catch((err: any) => {
@@ -62,7 +47,7 @@ const Login = () => {
 			});
 	};
 	return (
-		<div className='flex items-center justify-center h-screen'>
+		<div className=''>
 			<ToastContainer />
 			<div className='card w-[450px] max-w-[85%] '>
 				<h2 className='text-center font-semibold mb-[15px] text-2xl'>

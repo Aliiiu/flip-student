@@ -9,6 +9,7 @@ import { useAppSelector } from 'src/hook/useToolkit';
 import AppModal from './widget/Modal/Modal';
 import QuestionService from 'src/services/AssesssmentService';
 import { getSessionStorageOrDefault } from 'src/utils';
+import { logout } from 'src/utils/AuthUtils';
 interface NavigateType {
 	index: number;
 	setIndex: Function;
@@ -34,7 +35,9 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 		QuestionService.endExam()
 			.then((res) => {
 				console.log(res?.data);
-				navigate('/endExam');
+				logout(() => navigate('/endExam'));
+				sessionStorage.clear();
+				localStorage.clear();
 			})
 			.catch((err) => {
 				console.log(err?.response?.error?.message);
@@ -62,19 +65,24 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 						</div>{' '}
 						<span className='text-[14px]'>
 							{
-								questions.filter((item) => item?.candidate_answer !== undefined)
-									.length
+								questions.filter(
+									(item) =>
+										(item?.candidate_answer !== undefined &&
+											(item?.candidate_answer as string).length > 0) ||
+										(item?.selectedOption !== undefined &&
+											item?.selectedOption.length > 0)
+								).length
 							}
 						</span>
 					</div>
-					{typeof questions[0]?.candidate_answer}
+					{/* {typeof questions[0]?.candidate_answer} */}
 					<div className='flex justify-between'>
 						<div className='flex gap-x-[10px] items-center'>
 							<span className='bg-[#FFAD4A] h-[14px] rounded-[100%] w-[14px]'></span>{' '}
 							<h6 className='text-[14px]'>Revise Later</h6>
 						</div>{' '}
 						<span className='text-[14px]'>
-							{questions.filter((item) => item?.revise_later === true).length}
+							{questions.filter((item) => item?.reviseOption === true).length}
 						</span>
 					</div>
 					<div className='flex justify-between'>
@@ -84,8 +92,13 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 						</div>{' '}
 						<span className='text-[14px]'>
 							{questions.length -
-								questions.filter((item) => item?.candidate_answer !== undefined)
-									.length}
+								questions.filter(
+									(item) =>
+										(item?.candidate_answer !== undefined &&
+											(item?.candidate_answer as string).length > 0) ||
+										(item?.selectedOption !== undefined &&
+											item?.selectedOption.length > 0)
+								).length}
 						</span>
 					</div>
 				</div>
@@ -116,9 +129,12 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 									setIndex(idx);
 								}}
 								className={`${
-									item.revise_later
+									item?.reviseOption
 										? 'bg-[#FFAD4A]'
-										: item.candidate_answer !== undefined
+										: (item.candidate_answer !== undefined &&
+												item.candidate_answer.length > 0) ||
+										  (item.selectedOption !== undefined &&
+												item.selectedOption.length > 0)
 										? 'bg-[#0075ff]'
 										: 'bg-[#C0C0C0]'
 								} rounded-[8px] text-[14px] cursor-pointer text-white flex justify-center items-center h-[40px] w-[40px]`}
@@ -152,7 +168,7 @@ const ExamSummary: FC<NavigateType> = ({ index, setIndex }) => {
 								<div className='flex items-center justify-between w-full'>
 									<button
 										onClick={() => setShowModal(false)}
-										className='border py-[14px] px-[45px] rounded-[8px] text-[#E25C5C] border-[#E25C5C]'
+										className='border py-[14px] px-[45px] rounded-[8px] text-white bg-[#E25C5C]'
 									>
 										Cancel
 									</button>

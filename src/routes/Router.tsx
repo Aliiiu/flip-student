@@ -29,9 +29,9 @@ const Router = () => {
 			<Route
 				path='/endExam'
 				element={
-					<PrivateRoute>
+					<>
 						<EndExam />
-					</PrivateRoute>
+					</>
 				}
 			/>
 		</Routes>

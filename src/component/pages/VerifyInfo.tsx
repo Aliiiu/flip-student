@@ -1,26 +1,15 @@
 import { Popover } from '@headlessui/react';
 import { createContext, useEffect, useState } from 'react';
 import { HiOutlineLightBulb } from 'react-icons/hi';
-// import data from 'src/constants/studentData';
 import { auth } from 'src/store/auth';
 import Header from '../Header';
-import ErrorModal from '../UI/ErrorModal';
 import ModalContent from '../UI/ModalContent';
 import PopupContent from '../UI/PopModal';
-import PopUpModal from '../UI/PopModal';
 import AppModal from '../widget/Modal/Modal';
+import { useDispatch } from 'react-redux';
+import { updateTimer } from 'src/feature/timer/timerSlice';
 import { io } from 'socket.io-client';
-import { setSocket, websocket } from 'src/store/websocket';
-// import { socket } from 'src/context/socket';
-
-// export const socket = io(process.env.REACT_APP_SOCKET_URL || '', {
-// 	transports: ['websocket'],
-// 	auth: {
-// 		token: 'isaac001',
-// 	},
-// });
-
-// export const SocketContext = createContext({});
+import { loadDefaultQuestionState } from 'src/feature/counter/counterSlice';
 interface DArray {
 	label: string;
 	value: string;
@@ -31,38 +20,6 @@ const VerifyInfo = () => {
 		window.scrollTo(0, 0);
 	}, []);
 	const { authUser } = auth.use();
-	// const { socket } = websocket.use();
-	// const [connected, setConnected] = useState(socket.connected);
-	// const [message, setMessage] = useState('');
-
-	// useEffect(() => {
-	// 	socket.connect();
-	// 	socket.on('connect', () => {
-	// 		setConnected(true);
-	// 	});
-	// 	socket.on('disconnect', () => {
-	// 		setConnected(false);
-	// 		socket.connect();
-	// 	});
-
-	// 	return () => {
-	// 		socket.off('connect');
-	// 		socket.off('disconnect');
-	// 		socket.disconnect();
-	// 	};
-	// }, []);
-
-	// useEffect(() => {
-	// 	console.log('socket updated');
-	// 	setSocket(
-	// 		io(process.env.REACT_APP_SOCKET_URL || '', {
-	// 			autoConnect: true,
-	// 			auth: {
-	// 				token: authUser?.student?.name || '',
-	// 			},
-	// 		})
-	// 	);
-	// }, [authUser?.student?.name]);
 	const data: DArray[] = [
 		{
 			label: 'name',
@@ -103,10 +60,40 @@ const VerifyInfo = () => {
 	];
 
 	const [showModal, setShowModal] = useState<boolean | null>(false);
+	let dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(updateTimer(authUser?.obj_time));
+	}, [authUser?.obj_time, dispatch]);
 
 	const clickHandler = () => {
 		setShowModal(true);
 	};
+	const [questionData, setQuestionData] = useState([]);
+	const socket = io('wss://demo-assessment-service.flipcbt.com/student', {
+		auth: {
+			token: authUser?.student?.student_id || '',
+		},
+		// transports: ['websocket'],
+	});
+
+	useEffect(() => {
+		socket.on('authenticated', (data) => {
+			console.log('authenticated => ', data); // you will get
+			setQuestionData(data.candidate_questions);
+		});
+		// console.log(index);
+		// socket.on('connect_error', (err) => {
+		// 	// toast.warning(err.message);
+		// });
+	}, []);
+
+	useEffect(() => {
+		if (questionData.length > 0) {
+			dispatch(loadDefaultQuestionState(questionData));
+			console.log(questionData);
+		}
+	}, [dispatch, questionData]);
 
 	return (
 		<div>

@@ -3,17 +3,24 @@ import { ReactNode } from 'react';
 type Props = {
 	classes?: string;
 	onClick?: () => void;
+	onKeyPress?: any;
 	dataIndex?: number;
 	children: ReactNode;
 	disabled?: boolean;
 };
-const Button = ({ classes, children, onClick, dataIndex, disabled }: Props) => {
+const Button = ({
+	classes,
+	children,
+	onClick,
+	onKeyPress,
+	disabled,
+}: Props) => {
 	return (
 		<button
 			disabled={disabled}
-			data-index={dataIndex}
+			onKeyDown={onKeyPress}
 			onClick={onClick}
-			className={`rounded-lg w-[150px] disabled:cursor-not-allowed ${classes}`}
+			className={`rounded-lg w-[150px] disabled:cursor-not-allowed disabled:bg-opacity-70 ${classes}`}
 		>
 			{children}
 		</button>
