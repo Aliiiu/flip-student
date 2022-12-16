@@ -36,7 +36,7 @@ const Header = () => {
 				content={
 					<ModalContent
 						// content1='Verify your Information'
-						content2='Are you sure you want to end your exam'
+						content2='Are you sure you want to logout?'
 						// link='/'
 						btnAction={() => {
 							logout(() => navigate('/'));

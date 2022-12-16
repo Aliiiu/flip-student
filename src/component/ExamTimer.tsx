@@ -9,8 +9,8 @@ const ExamTimer: FC<{
 }> = ({ socket }) => {
 	const { authUser } = auth.use();
 	const { timer } = useAppSelector((state: { timer: any }) => state.timer);
-	// let newTime = timer || authUser?.obj_time;
-	let newTime = '20:00';
+	let newTime = timer || authUser?.obj_time;
+	// let newTime = '20:00';
 	let setMin = Number(newTime.split(':')[0]) || 1;
 	let setSecs = Number(newTime.split(':')[1]);
 	// console.log(newTime.split(':'));
